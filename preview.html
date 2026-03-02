@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI Website Builder — Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fira+Code&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.development.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body,#root{height:100%;overflow:hidden}
+  body{font-family:'DM Sans','Segoe UI',sans-serif;background:#080b12;color:#e8eaf0}
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:#1c2236;border-radius:4px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const EXAMPLES = [
+  "SaaS landing page for a productivity app",
+  "Dark-themed crypto dashboard",
+  "Restaurant website with menu",
+  "Personal portfolio for a designer",
+];
+
+const DEMO_HTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>FlowApp — Productivity Reimagined</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;background:#05070f;color:#e8eaf0;overflow-x:hidden}
+    nav{display:flex;justify-content:space-between;align-items:center;padding:20px 60px;border-bottom:1px solid #1a1f2e;position:sticky;top:0;z-index:99;background:rgba(5,7,15,0.92);backdrop-filter:blur(12px)}
+    .logo{font-weight:900;font-size:20px;background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .nav-links{display:flex;gap:32px}
+    .nav-links a{color:#6b7db3;text-decoration:none;font-size:14px;transition:color .2s}
+    .nav-links a:hover{color:#e8eaf0}
+    .btn-nav{padding:9px 20px;background:linear-gradient(135deg,#4f46e5,#7c3aed);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:600;cursor:pointer}
+    .hero{text-align:center;padding:110px 20px 80px}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);border-radius:999px;font-size:12px;color:#a78bfa;margin-bottom:28px}
+    h1{font-size:clamp(38px,5.5vw,68px);font-weight:900;line-height:1.08;letter-spacing:-2px;margin-bottom:22px}
+    h1 span{background:linear-gradient(135deg,#6366f1,#a78bfa,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .sub{font-size:17px;color:#6b7db3;max-width:500px;margin:0 auto 36px;line-height:1.7}
+    .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+    .btn-p{padding:13px 30px;background:linear-gradient(135deg,#4f46e5,#7c3aed);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:transform .2s,box-shadow .2s}
+    .btn-p:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(99,102,241,0.4)}
+    .btn-g{padding:13px 30px;background:transparent;border:1px solid #1e2740;border-radius:12px;color:#c4c9d9;font-size:15px;font-weight:600;cursor:pointer}
+    .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;max-width:940px;margin:72px auto;padding:0 32px}
+    .card{background:#0c0f1a;border:1px solid #1a1f2e;border-radius:18px;padding:26px;transition:border-color .3s,transform .3s}
+    .card:hover{border-color:#4f46e5;transform:translateY(-4px)}
+    .ci{font-size:26px;margin-bottom:14px}
+    .card h3{font-size:16px;font-weight:700;margin-bottom:9px}
+    .card p{font-size:13px;color:#6b7db3;line-height:1.7}
+    footer{text-align:center;padding:36px;border-top:1px solid #1a1f2e;color:#3d4663;font-size:13px}
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">⚡ FlowApp</div>
+    <div class="nav-links"><a href="#">Features</a><a href="#">Pricing</a><a href="#">Docs</a></div>
+    <button class="btn-nav">Get Started</button>
+  </nav>
+  <div class="hero">
+    <div class="badge">✨ Now in public beta</div>
+    <h1>Work smarter,<br/>not <span>harder</span></h1>
+    <p class="sub">The productivity platform that adapts to how you think. Organize, automate, and ship faster than ever.</p>
+    <div class="btns">
+      <button class="btn-p">Start for free →</button>
+      <button class="btn-g">Watch demo</button>
+    </div>
+  </div>
+  <div class="features">
+    <div class="card"><div class="ci">🧠</div><h3>AI-Powered Tasks</h3><p>Let AI prioritize your to-do list automatically based on deadlines and work patterns.</p></div>
+    <div class="card"><div class="ci">⚡</div><h3>Instant Automation</h3><p>Connect your tools in seconds. No code needed — just describe what you want done.</p></div>
+    <div class="card"><div class="ci">📊</div><h3>Live Analytics</h3><p>See exactly where your time goes with beautiful real-time productivity dashboards.</p></div>
+  </div>
+  <footer>© 2025 FlowApp · Built with AI Website Builder</footer>
+</body>
+</html>`;
+
+const FLOW = [
+  {delay:600,  round:1, done:false, msg:"🚀 Round 1 — Gemini is building your website from scratch..."},
+  {delay:2800, round:1, done:true,  msg:"Round 1 complete — Gemini 1.5 Flash"},
+  {delay:3200, round:2, done:false, msg:"🔄 Round 2 — OpenRouter is reviewing and improving the code..."},
+  {delay:5600, round:2, done:true,  msg:"Round 2 complete — OpenRouter (Llama 3.3 70B)"},
+  {delay:6000, round:3, done:false, msg:"✨ Round 3 — Gemini is doing the final polish..."},
+  {delay:8200, round:3, done:true,  msg:"✅ Your website is ready!"},
+];
+
+const { useState, useRef, useEffect } = React;
+
+function App() {
+  const [messages, setMessages]     = useState([]);
+  const [input, setInput]           = useState("");
+  const [generating, setGenerating] = useState(false);
+  const [status, setStatus]         = useState("");
+  const [activeRound, setActiveRound] = useState(0);
+  const [doneRounds, setDoneRounds] = useState([]);
+  const [code, setCode]             = useState("");
+  const [tab, setTab]               = useState("preview");
+  const timers = useRef([]);
+  const bottomRef = useRef(null);
+
+  useEffect(() => { bottomRef.current?.scrollIntoView({behavior:"smooth"}); }, [messages, generating]);
+
+  const clearTimers = () => { timers.current.forEach(clearTimeout); timers.current = []; };
+
+  const run = (prompt) => {
+    const text = (prompt || input).trim();
+    if (!text || generating) return;
+    setInput("");
+    setMessages(prev => [...prev, {role:"user", text}]);
+    setGenerating(true);
+    setCode(""); setActiveRound(0); setDoneRounds([]);
+    setStatus("Connecting to AI models...");
+    clearTimers();
+
+    FLOW.forEach(({delay, round, done, msg}) => {
+      const t = setTimeout(() => {
+        setStatus(msg);
+        setActiveRound(round);
+        if (done) {
+          setCode(DEMO_HTML);
+          setDoneRounds(prev => [...new Set([...prev, round])]);
+          if (round === 3) {
+            setGenerating(false);
+            setMessages(prev => [...prev, {role:"assistant", text:"✅ Done! Your website is live in the preview →"}]);
+          }
+        }
+      }, delay);
+      timers.current.push(t);
+    });
+  };
+
+  const iframeSrc = code ? `data:text/html;charset=utf-8,${encodeURIComponent(code)}` : null;
+
+  return (
+    <div style={{display:"flex",height:"100vh",background:"#080b12",color:"#e8eaf0",overflow:"hidden"}}>
+
+      {/* ══ LEFT: CHAT ══ */}
+      <div style={{width:"340px",flexShrink:0,display:"flex",flexDirection:"column",borderRight:"1px solid #141824",background:"#0a0d17"}}>
+        {/* Header */}
+        <div style={{padding:"16px 18px 14px",borderBottom:"1px solid #141824"}}>
+          <div style={{display:"flex",alignItems:"center",gap:"9px",marginBottom:"3px"}}>
+            <div style={{width:"26px",height:"26px",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",borderRadius:"7px",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px"}}>⚡</div>
+            <span style={{fontSize:"14px",fontWeight:"700",letterSpacing:"-0.3px"}}>AI Website Builder</span>
+          </div>
+          <div style={{fontSize:"10px",color:"#2a3050",marginLeft:"35px"}}>Gemini × OpenRouter · 3-round AI review</div>
+        </div>
+
+        {/* Messages */}
+        <div style={{flex:1,overflowY:"auto",padding:"14px",display:"flex",flexDirection:"column",gap:"10px"}}>
+          {messages.length === 0 ? (
+            <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"10px",padding:"24px 12px",textAlign:"center"}}>
+              <div style={{fontSize:"40px",marginBottom:"4px"}}>🏗️</div>
+              <div style={{fontSize:"14px",fontWeight:"600",color:"#b0b8d0"}}>Describe your website</div>
+              <div style={{fontSize:"11px",color:"#2a3050",lineHeight:"1.7",maxWidth:"230px"}}>Two AI models collaborate through 3 rounds of building & review to craft your site.</div>
+              <div style={{display:"flex",flexWrap:"wrap",gap:"6px",justifyContent:"center",marginTop:"4px"}}>
+                {EXAMPLES.map(p=>(
+                  <div key={p} onClick={()=>!generating&&run(p)} style={{padding:"6px 11px",background:"#0f1320",border:"1px solid #1c2236",borderRadius:"999px",fontSize:"11px",color:"#5a6a96",cursor:"pointer"}}>{p}</div>
+                ))}
+              </div>
+            </div>
+          ) : messages.map((m,i)=>(
+            <div key={i} style={{animation:"fadeIn .25s ease",maxWidth:"88%",alignSelf:m.role==="user"?"flex-end":"flex-start",background:m.role==="user"?"linear-gradient(135deg,#4f46e5,#7c3aed)":"#0f1320",border:m.role==="assistant"?"1px solid #1c2236":"none",borderRadius:m.role==="user"?"14px 14px 3px 14px":"3px 14px 14px 14px",padding:"9px 13px",fontSize:"12.5px",lineHeight:"1.6"}}>{m.text}</div>
+          ))}
+          {generating && (
+            <div style={{alignSelf:"flex-start",background:"#0f1320",border:"1px solid #1c2236",borderRadius:"3px 14px 14px 14px",padding:"9px 14px",fontSize:"12px",color:"#5a6a96"}}>
+              <span style={{animation:"pulse 1.2s infinite",display:"inline-block"}}>●</span> AI is working...
+            </div>
+          )}
+          <div ref={bottomRef}/>
+        </div>
+
+        {/* Input */}
+        <div style={{padding:"10px 14px 14px",borderTop:"1px solid #141824"}}>
+          <div style={{display:"flex",gap:"7px",alignItems:"flex-end"}}>
+            <textarea
+              style={{flex:1,background:"#0f1320",border:"1px solid #1c2236",borderRadius:"11px",padding:"9px 12px",color:"#e8eaf0",fontSize:"12.5px",resize:"none",outline:"none",lineHeight:"1.5",fontFamily:"inherit",minHeight:"40px",maxHeight:"100px"}}
+              placeholder="Describe your website..."
+              value={input}
+              onChange={e=>setInput(e.target.value)}
+              onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();run();}}}
+              rows={1}
+              disabled={generating}
+            />
+            <button
+              onClick={()=>run()}
+              disabled={!input.trim()||generating}
+              style={{width:"38px",height:"38px",borderRadius:"10px",border:"none",flexShrink:0,background:input.trim()&&!generating?"linear-gradient(135deg,#4f46e5,#7c3aed)":"#1c2236",color:input.trim()&&!generating?"#fff":"#3d4663",cursor:input.trim()&&!generating?"pointer":"not-allowed",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",transition:"all .2s"}}
+            >↑</button>
+          </div>
+          <div style={{fontSize:"10px",color:"#1c2236",textAlign:"center",marginTop:"6px"}}>Enter to send · Shift+Enter for new line</div>
+        </div>
+      </div>
+
+      {/* ══ RIGHT: PREVIEW ══ */}
+      <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+        {/* Status bar */}
+        <div style={{display:"flex",alignItems:"center",gap:"10px",padding:"8px 18px",borderBottom:"1px solid #141824",background:"#0a0d17",minHeight:"44px"}}>
+          <div style={{display:"flex",gap:"5px"}}>
+            {[1,2,3].map(r=>{
+              const isActive = activeRound===r && generating;
+              const isDone   = doneRounds.includes(r);
+              return (
+                <div key={r} style={{width:"22px",height:"22px",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"9px",fontWeight:"700",border:"1px solid",borderColor:isDone?"#4f46e5":isActive?"#7c3aed":"#1c2236",background:isDone?"#4f46e5":isActive?"rgba(124,58,237,0.2)":"transparent",color:isDone||isActive?"#e8eaf0":"#3d4663",transition:"all .3s"}}>
+                  {isDone ? "✓" : r}
+                </div>
+              );
+            })}
+          </div>
+          <div style={{flex:1,fontSize:"11.5px",color:"#5a6a96",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>
+            {status || "Ready — describe a website to get started"}
+          </div>
+          {code && !generating && (
+            <button style={{padding:"6px 14px",background:"linear-gradient(135deg,#059669,#10b981)",border:"none",borderRadius:"8px",color:"#fff",fontSize:"11px",fontWeight:"600",cursor:"pointer",flexShrink:0}}>
+              ⬇ Download ZIP
+            </button>
+          )}
+        </div>
+
+        {/* Tabs */}
+        <div style={{display:"flex",padding:"0 18px",borderBottom:"1px solid #141824",background:"#0a0d17"}}>
+          {["preview","code"].map(t=>(
+            <button key={t} onClick={()=>setTab(t)} style={{padding:"9px 16px",background:"transparent",border:"none",borderBottom:tab===t?"2px solid #6366f1":"2px solid transparent",color:tab===t?"#c4c9d9":"#3d4663",fontSize:"11.5px",fontWeight:tab===t?"600":"400",cursor:"pointer",marginBottom:"-1px"}}>
+              {t==="preview" ? "🌐 Preview" : "</> Code"}
+            </button>
+          ))}
+        </div>
+
+        {/* Content area */}
+        <div style={{flex:1,position:"relative",overflow:"hidden"}}>
+          {tab === "preview" ? (
+            code
+              ? <iframe style={{width:"100%",height:"100%",border:"none"}} src={iframeSrc} title="preview" sandbox="allow-scripts"/>
+              : <div style={{height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"12px",color:"#252d47"}}>
+                  <div style={{fontSize:"56px",opacity:.3}}>🌐</div>
+                  <div style={{fontSize:"14px",fontWeight:"500"}}>Your website will appear here</div>
+                  <div style={{fontSize:"11px",opacity:.5}}>Describe your site in the chat to begin</div>
+                </div>
+          ) : (
+            <div style={{height:"100%",overflowY:"auto",background:"#080b12"}}>
+              {code
+                ? <pre style={{margin:0,padding:"20px",fontSize:"11px",lineHeight:"1.8",color:"#6a7a9a",fontFamily:"'Fira Code',monospace",whiteSpace:"pre-wrap",wordBreak:"break-word"}}>{code}</pre>
+                : <div style={{height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"12px",color:"#252d47"}}>
+                    <div style={{fontSize:"48px",opacity:.3}}>📝</div>
+                    <div style={{fontSize:"13px"}}>No code yet</div>
+                  </div>
+              }
+            </div>
+          )}
+
+          {/* Generating overlay */}
+          {generating && (
+            <div style={{position:"absolute",inset:0,background:"rgba(8,11,18,0.88)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"14px",backdropFilter:"blur(6px)"}}>
+              <div style={{width:"44px",height:"44px",borderRadius:"50%",border:"3px solid #1c2236",borderTop:"3px solid #6366f1",animation:"spin .75s linear infinite"}}/>
+              <div style={{fontSize:"12.5px",color:"#5a6a96"}}>{status}</div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
