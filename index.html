@@ -11,17 +11,18 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body,#root{height:100%;overflow:hidden}
-body{font-family:'Inter',sans-serif;background:#060810;color:#e2e8f0}
-::-webkit-scrollbar{width:4px;height:4px}
+body{font-family:'Inter',sans-serif;background:#0a0a0f;color:#e2e8f0}
+::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:#1e2535;border-radius:99px}
+::-webkit-scrollbar-thumb{background:#2a2f3e;border-radius:99px}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pulse{0%,100%{opacity:.2}50%{opacity:1}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulseOp{0%,100%{opacity:.2}50%{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-@keyframes gradMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@keyframes slideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes meshMove{0%{transform:translate(0,0) scale(1)}25%{transform:translate(3%,2%) scale(1.03)}50%{transform:translate(-2%,4%) scale(1.01)}75%{transform:translate(2%,-2%) scale(1.02)}100%{transform:translate(0,0) scale(1)}}
+@keyframes thinking{0%{width:0}100%{width:100%}}
 </style>
 </head>
 <body>
@@ -30,159 +31,160 @@ body{font-family:'Inter',sans-serif;background:#060810;color:#e2e8f0}
 const { useState, useRef, useEffect } = React;
 
 const EXAMPLES = [
-  {icon:"🛒",label:"E-commerce store",text:"Modern e-commerce store with product grid, cart, and checkout"},
-  {icon:"💼",label:"SaaS landing page",text:"SaaS landing page with pricing table, features, and testimonials"},
-  {icon:"🍕",label:"Restaurant website",text:"Restaurant website with menu, gallery, and reservation form"},
-  {icon:"🎨",label:"Designer portfolio",text:"Creative portfolio for a UI/UX designer with case studies"},
-  {icon:"📊",label:"Analytics dashboard",text:"Dark analytics dashboard with charts and KPI cards"},
+  {icon:"🛒",label:"E-commerce store",text:"Build a modern e-commerce store with product grid, cart, and checkout"},
+  {icon:"💼",label:"SaaS landing page",text:"Create a SaaS landing page with pricing, features, and testimonials"},
+  {icon:"🍕",label:"Restaurant website",text:"Restaurant website with menu, gallery, and online reservation form"},
+  {icon:"🎨",label:"Designer portfolio",text:"Creative portfolio for a UI/UX designer with case studies and contact"},
+  {icon:"📊",label:"Analytics dashboard",text:"Dark analytics dashboard with charts, KPI cards, and data tables"},
   {icon:"🏥",label:"Medical clinic",text:"Medical clinic website with doctor profiles and appointment booking"},
 ];
 
-const FEATURES = [
-  {icon:"⚡",t:"Dual AI Models",d:"Gemini + OpenRouter review each other's code for best output"},
-  {icon:"🔄",t:"3-Round Review",d:"Iterative improvement loop until production-ready"},
-  {icon:"👁️",t:"Live Preview",d:"Watch your website update in real-time in the browser"},
-  {icon:"🗄️",t:"Supabase Backend",d:"One-click database, auth, and storage integration"},
-  {icon:"🐙",t:"GitHub Sync",d:"Every change auto-committed, full version history"},
-  {icon:"🚀",t:"One-Click Publish",d:"Deploy to a live URL instantly, custom domain support"},
-  {icon:"💬",t:"Lifetime Chat History",d:"All projects and conversations saved forever"},
-  {icon:"📦",t:"Export Code",d:"Download full source code ZIP anytime"},
-];
-
 const PAST_PROJECTS = [
-  {id:1,name:"E-commerce Store",date:"2h ago",color:"#6366f1"},
-  {id:2,name:"Portfolio Site",date:"Yesterday",color:"#10b981"},
-  {id:3,name:"SaaS Landing Page",date:"2 days ago",color:"#f59e0b"},
-  {id:4,name:"Restaurant Website",date:"Last week",color:"#ef4444"},
-  {id:5,name:"Crypto Dashboard",date:"Last week",color:"#8b5cf6"},
+  {id:1,name:"Color Canvas Sites",date:"23 Nov 2025",color:"#a855f7"},
+  {id:2,name:"Bubble Type Frenzy",date:"21 Nov 2025",color:"#3b82f6"},
+  {id:3,name:"Sonia AI Studio",date:"18 Nov 2025",color:"#10b981"},
+  {id:4,name:"Restaurant Website",date:"15 Nov 2025",color:"#f59e0b"},
+  {id:5,name:"Crypto Dashboard",date:"10 Nov 2025",color:"#ef4444"},
 ];
 
-const VERSION_HISTORY = [
-  {id:1,label:"Final polish",time:"Just now",active:true},
-  {id:2,label:"OpenRouter review",time:"8s ago",active:false},
-  {id:3,label:"Gemini initial build",time:"15s ago",active:false},
-  {id:4,label:"Project created",time:"20s ago",active:false},
-];
+const DEMO_HTML=`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>NovaSaaS</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet"/><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:#0d0014;color:#e8eaf0;overflow-x:hidden;min-height:100vh}nav{display:flex;justify-content:space-between;align-items:center;padding:18px 52px;position:sticky;top:0;background:rgba(13,0,20,.85);backdrop-filter:blur(16px);z-index:99;border-bottom:1px solid rgba(168,85,247,.12)}.logo{display:flex;align-items:center;gap:9px}.logo-dot{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#ec4899);display:flex;align-items:center;justify-content:center;font-size:13px}.logo-text{font-weight:900;font-size:18px}.nav-links{display:flex;gap:28px}.nav-links a{color:#9ca3af;text-decoration:none;font-size:14px;transition:color .2s}.nav-links a:hover{color:#e8eaf0}.nav-btns{display:flex;gap:10px}.btn-ghost{padding:8px 18px;background:transparent;border:1px solid rgba(168,85,247,.3);border-radius:9px;color:#c4b5fd;font-size:13px;cursor:pointer}.btn-cta{padding:9px 20px;background:linear-gradient(135deg,#a855f7,#ec4899);border:none;border-radius:9px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:transform .2s}.btn-cta:hover{transform:translateY(-1px)}.hero{position:relative;text-align:center;padding:110px 20px 80px;overflow:hidden}.hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);width:700px;height:500px;background:radial-gradient(ellipse,rgba(168,85,247,.2) 0%,rgba(236,72,153,.1) 40%,transparent 70%);pointer-events:none}.badge{display:inline-flex;align-items:center;gap:8px;padding:5px 14px;background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.25);border-radius:999px;font-size:11.5px;color:#c4b5fd;margin-bottom:24px;position:relative;z-index:1}h1{font-size:clamp(42px,6vw,72px);font-weight:900;line-height:1.05;letter-spacing:-2px;margin-bottom:20px;position:relative;z-index:1}.grad{background:linear-gradient(135deg,#a855f7,#ec4899,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.sub{font-size:17px;color:#9ca3af;max-width:500px;margin:0 auto 36px;line-height:1.75;position:relative;z-index:1}.btns{display:flex;gap:12px;justify-content:center;position:relative;z-index:1}.btn-p{padding:14px 30px;background:linear-gradient(135deg,#a855f7,#ec4899);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:transform .2s,box-shadow .2s}.btn-p:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(168,85,247,.4)}.btn-g{padding:14px 30px;background:transparent;border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#c4c9d9;font-size:15px;font-weight:600;cursor:pointer}.trust{display:flex;align-items:center;justify-content:center;gap:24px;margin-top:30px;position:relative;z-index:1;font-size:12px;color:#6b7280}.trust-dot{width:6px;height:6px;border-radius:50%;background:#a855f7}.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;max-width:900px;margin:80px auto;padding:0 32px}.card{background:rgba(255,255,255,.03);border:1px solid rgba(168,85,247,.12);border-radius:18px;padding:26px;transition:border-color .3s,transform .3s,background .3s}.card:hover{border-color:rgba(168,85,247,.4);transform:translateY(-4px);background:rgba(168,85,247,.05)}.ci{font-size:26px;margin-bottom:14px}.card h3{font-size:16px;font-weight:700;margin-bottom:9px}.card p{font-size:13px;color:#9ca3af;line-height:1.7}footer{text-align:center;padding:36px;border-top:1px solid rgba(255,255,255,.06);color:#4b5563;font-size:13px}</style></head><body><nav><div class="logo"><div class="logo-dot">✦</div><div class="logo-text">NovaSaaS</div></div><div class="nav-links"><a href="#">Features</a><a href="#">Pricing</a><a href="#">About</a></div><div class="nav-btns"><button class="btn-ghost">Sign In</button><button class="btn-cta">Get Started</button></div></nav><div class="hero"><div class="hero-glow"></div><div class="badge">⚡ Powered by AI Technology</div><h1>Transform Your Business<br/><span class="grad">With AI Innovation</span></h1><p class="sub">Harness the power of cutting-edge AI to automate workflows, boost productivity, and unlock new possibilities for your team.</p><div class="btns"><button class="btn-p">Start Free Trial →</button><button class="btn-g">Watch Demo</button></div><div class="trust"><div class="trust-dot"></div><span>No credit card required</span><div class="trust-dot" style="background:#ec4899"></div><span>14-day free trial</span></div></div><div class="features"><div class="card"><div class="ci">🧠</div><h3>Smart Automation</h3><p>Let AI handle repetitive tasks while you focus on what matters most to your business.</p></div><div class="card"><div class="ci">📊</div><h3>Advanced Analytics</h3><p>Real-time insights and beautiful dashboards to track every metric that drives growth.</p></div><div class="card"><div class="ci">🔒</div><h3>Enterprise Security</h3><p>Bank-grade encryption and compliance tools built into every layer of the platform.</p></div></div><footer>© 2025 NovaSaaS · Built with BuildAI ⚡</footer></body></html>`;
 
-const DEMO_HTML = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>FlowApp</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet"/><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:#05070f;color:#e8eaf0}nav{display:flex;justify-content:space-between;align-items:center;padding:18px 56px;border-bottom:1px solid #1a1f2e;position:sticky;top:0;background:rgba(5,7,15,.92);backdrop-filter:blur(12px);z-index:99}.logo{font-weight:900;font-size:19px;background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.nav-links{display:flex;gap:28px}.nav-links a{color:#6b7db3;text-decoration:none;font-size:13.5px}.btn-cta{padding:9px 22px;background:linear-gradient(135deg,#4f46e5,#7c3aed);border:none;border-radius:9px;color:#fff;font-size:13px;font-weight:600;cursor:pointer}.hero{text-align:center;padding:100px 20px 70px}.badge{display:inline-flex;align-items:center;gap:7px;padding:5px 15px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.3);border-radius:999px;font-size:11.5px;color:#a78bfa;margin-bottom:26px}h1{font-size:clamp(36px,5vw,64px);font-weight:900;line-height:1.08;letter-spacing:-1.5px;margin-bottom:20px}h1 span{background:linear-gradient(135deg,#6366f1,#a78bfa,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.sub{font-size:16px;color:#6b7db3;max-width:480px;margin:0 auto 34px;line-height:1.7}.btns{display:flex;gap:10px;justify-content:center}.btn-p{padding:13px 28px;background:linear-gradient(135deg,#4f46e5,#7c3aed);border:none;border-radius:11px;color:#fff;font-size:14px;font-weight:700;cursor:pointer}.btn-g{padding:13px 28px;background:transparent;border:1px solid #1e2740;border-radius:11px;color:#c4c9d9;font-size:14px;font-weight:600;cursor:pointer}.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;max-width:880px;margin:64px auto;padding:0 28px}.card{background:#0c0f1a;border:1px solid #1a1f2e;border-radius:16px;padding:24px;transition:border-color .3s,transform .3s}.card:hover{border-color:#4f46e5;transform:translateY(-4px)}.ci{font-size:24px;margin-bottom:12px}.card h3{font-size:15px;font-weight:700;margin-bottom:8px}.card p{font-size:12.5px;color:#6b7db3;line-height:1.7}footer{text-align:center;padding:32px;border-top:1px solid #1a1f2e;color:#3d4663;font-size:12px}</style></head><body><nav><div class="logo">⚡ FlowApp</div><div class="nav-links"><a href="#">Features</a><a href="#">Pricing</a><a href="#">Docs</a></div><button class="btn-cta">Get Started</button></nav><div class="hero"><div class="badge">✨ Now in public beta</div><h1>Work smarter,<br/>not <span>harder</span></h1><p class="sub">The productivity platform that adapts to how you think.</p><div class="btns"><button class="btn-p">Start for free →</button><button class="btn-g">Watch demo</button></div></div><div class="features"><div class="card"><div class="ci">🧠</div><h3>AI Tasks</h3><p>Let AI prioritize your to-do list based on deadlines.</p></div><div class="card"><div class="ci">⚡</div><h3>Automation</h3><p>Connect tools in seconds. No code needed.</p></div><div class="card"><div class="ci">📊</div><h3>Analytics</h3><p>Beautiful real-time productivity dashboards.</p></div></div><footer>© 2025 FlowApp · Built with BuildAI</footer></body></html>`;
+const THINKING_STEPS = [
+  "I'll create a vibrant SaaS website using this stunning color palette! The bright gradient from purple to coral on a dark background evokes modern AI/tech products.",
+  "Design approach:",
+  "• Dark background with neon-gradient accents",
+  "• Glowing effects on interactive elements", 
+  "• Smooth animations and bold typography",
+  "• Modern AI SaaS aesthetic",
+  "Let me build the design system and landing page:"
+];
 
 const FLOW=[
-  {delay:500,round:1,done:false,msg:"🚀 Round 1 — Gemini is building your website from scratch..."},
-  {delay:2800,round:1,done:true,msg:"Round 1 complete — Gemini 1.5 Flash ✓"},
-  {delay:3200,round:2,done:false,msg:"🔄 Round 2 — OpenRouter reviewing & improving..."},
-  {delay:5600,round:2,done:true,msg:"Round 2 complete — OpenRouter (Llama 3.3 70B) ✓"},
-  {delay:6000,round:3,done:false,msg:"✨ Round 3 — Gemini doing final polish..."},
-  {delay:8400,round:3,done:true,msg:"✅ Website ready!"},
+  {delay:400, type:"thinking", msg:"Thought for 28s"},
+  {delay:2000, type:"thinking_done"},
+  {delay:2200, round:1, done:false, msg:"🚀 Round 1 — Gemini building from scratch..."},
+  {delay:3800, round:1, done:true,  msg:"Round 1 complete — Gemini 1.5 Flash ✓"},
+  {delay:4100, round:2, done:false, msg:"🔄 Round 2 — OpenRouter reviewing..."},
+  {delay:6200, round:2, done:true,  msg:"Round 2 complete — OpenRouter ✓"},
+  {delay:6500, round:3, done:false, msg:"✨ Round 3 — Final polish..."},
+  {delay:8600, round:3, done:true,  msg:"✅ Website ready!"},
 ];
 
-// MODAL WRAPPER
+const SUGGESTIONS = [
+  "Add Testimonials Section","Add Product Demo","Add Pricing Table","Add FAQ Section","Add Contact Form"
+];
+
+// ── MODAL ─────────────────────────────────────────────────────────────────────
 function Modal({onClose,children,width="420px"}){
   return(
-    <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.75)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(8px)",animation:"fadeIn .15s ease"}}>
-      <div onClick={e=>e.stopPropagation()} style={{background:"#0c0f1a",border:"1px solid #1e2535",borderRadius:"18px",width,maxWidth:"95vw",maxHeight:"90vh",overflowY:"auto",animation:"slideIn .2s ease",boxShadow:"0 24px 80px rgba(0,0,0,.6)"}}>
+    <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.8)",zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(10px)",animation:"fadeIn .15s ease"}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:"#111318",border:"1px solid #1e2535",borderRadius:"20px",width,maxWidth:"94vw",maxHeight:"88vh",overflowY:"auto",animation:"slideDown .2s ease",boxShadow:"0 32px 100px rgba(0,0,0,.7)"}}>
         {children}
       </div>
     </div>
   );
 }
 
-// AUTH MODAL
+// ── AUTH MODAL ────────────────────────────────────────────────────────────────
 function AuthModal({mode,onClose,onAuth}){
   const [tab,setTab]=useState(mode);
+  const [name,setName]=useState("");
   const [email,setEmail]=useState("");
   const [pass,setPass]=useState("");
-  const [name,setName]=useState("");
-  const inp={width:"100%",background:"#080b14",border:"1px solid #1e2535",borderRadius:"10px",padding:"12px 14px",color:"#e2e8f0",fontSize:"13px",outline:"none",fontFamily:"inherit",marginBottom:"10px",display:"block"};
+  const fi={width:"100%",background:"#0a0c12",border:"1px solid #1e2535",borderRadius:"11px",padding:"12px 14px",color:"#e2e8f0",fontSize:"13.5px",outline:"none",fontFamily:"inherit",marginBottom:"12px",display:"block"};
   return(
-    <Modal onClose={onClose} width="380px">
-      <div style={{padding:"28px"}}>
-        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"22px"}}>
-          <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
-            <div style={{width:"26px",height:"26px",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",borderRadius:"7px",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px"}}>⚡</div>
-            <span style={{fontWeight:"800",fontSize:"16px"}}>BuildAI</span>
+    <Modal onClose={onClose} width="390px">
+      <div style={{padding:"30px"}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"24px"}}>
+          <div style={{display:"flex",alignItems:"center",gap:"9px"}}>
+            <div style={{width:"28px",height:"28px",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"14px"}}>⚡</div>
+            <span style={{fontWeight:"800",fontSize:"17px"}}>BuildAI</span>
           </div>
-          <button onClick={onClose} style={{background:"none",border:"none",color:"#475569",cursor:"pointer",fontSize:"20px",lineHeight:1}}>✕</button>
+          <button onClick={onClose} style={{background:"none",border:"none",color:"#475569",cursor:"pointer",fontSize:"22px",lineHeight:1}}>×</button>
         </div>
-        <div style={{display:"flex",gap:"3px",background:"#080b14",borderRadius:"11px",padding:"3px",marginBottom:"22px"}}>
-          {["signin","signup"].map(t=>(
-            <button key={t} onClick={()=>setTab(t)} style={{flex:1,padding:"9px",background:tab===t?"#1e2535":"transparent",border:"none",borderRadius:"9px",color:tab===t?"#e2e8f0":"#475569",fontSize:"13px",fontWeight:tab===t?"600":"400",cursor:"pointer",transition:"all .15s"}}>
-              {t==="signin"?"Sign in":"Create account"}
-            </button>
-          ))}
+        <h2 style={{fontSize:"20px",fontWeight:"700",marginBottom:"6px"}}>{tab==="signin"?"Welcome back":"Create your account"}</h2>
+        <p style={{fontSize:"13px",color:"#64748b",marginBottom:"22px"}}>{tab==="signin"?"Sign in to continue building":"Free forever · No credit card needed"}</p>
+        {/* Google button */}
+        <button style={{width:"100%",padding:"12px",background:"#0a0c12",border:"1px solid #1e2535",borderRadius:"11px",color:"#e2e8f0",fontSize:"14px",cursor:"pointer",marginBottom:"16px",display:"flex",alignItems:"center",justifyContent:"center",gap:"10px",fontFamily:"inherit",fontWeight:"500"}}>
+          <span style={{fontSize:"18px",background:"linear-gradient(135deg,#4285f4,#34a853,#fbbc04,#ea4335)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",fontWeight:"900"}}>G</span>
+          Continue with Google
+        </button>
+        <div style={{display:"flex",alignItems:"center",gap:"12px",marginBottom:"16px"}}>
+          <div style={{flex:1,height:"1px",background:"#1e2535"}}/><span style={{fontSize:"11px",color:"#334155"}}>or with email</span><div style={{flex:1,height:"1px",background:"#1e2535"}}/>
         </div>
-        {tab==="signup"&&<input style={inp} placeholder="Full name" value={name} onChange={e=>setName(e.target.value)}/>}
-        <input style={inp} placeholder="Email address" value={email} onChange={e=>setEmail(e.target.value)} type="email"/>
-        <input style={inp} placeholder="Password" value={pass} onChange={e=>setPass(e.target.value)} type="password"/>
-        <button onClick={()=>onAuth({name:name||"User",email})} style={{width:"100%",padding:"13px",background:"linear-gradient(135deg,#4f46e5,#7c3aed)",border:"none",borderRadius:"11px",color:"#fff",fontSize:"14px",fontWeight:"700",cursor:"pointer",marginTop:"4px"}}>
+        {tab==="signup"&&<input style={fi} placeholder="Full name" value={name} onChange={e=>setName(e.target.value)}/>}
+        <input style={fi} type="email" placeholder="Email address" value={email} onChange={e=>setEmail(e.target.value)}/>
+        <input style={fi} type="password" placeholder="Password" value={pass} onChange={e=>setPass(e.target.value)}/>
+        <button onClick={()=>onAuth({name:name||email.split("@")[0]||"User",email})} style={{width:"100%",padding:"13px",background:"linear-gradient(135deg,#4f46e5,#7c3aed)",border:"none",borderRadius:"11px",color:"#fff",fontSize:"14px",fontWeight:"700",cursor:"pointer",marginTop:"4px"}}>
           {tab==="signin"?"Sign in →":"Create free account →"}
         </button>
-        <div style={{display:"flex",alignItems:"center",gap:"10px",margin:"18px 0 0"}}>
-          <div style={{flex:1,height:"1px",background:"#1e2535"}}/>
-          <span style={{fontSize:"11px",color:"#334155"}}>or</span>
-          <div style={{flex:1,height:"1px",background:"#1e2535"}}/>
+        <div style={{textAlign:"center",marginTop:"16px",fontSize:"12px",color:"#334155"}}>
+          {tab==="signin"?"Don't have an account? ":"Already have an account? "}
+          <span onClick={()=>setTab(tab==="signin"?"signup":"signin")} style={{color:"#818cf8",cursor:"pointer",fontWeight:"600"}}>
+            {tab==="signin"?"Sign up free":"Sign in"}
+          </span>
         </div>
-        <button style={{width:"100%",padding:"12px",background:"#080b14",border:"1px solid #1e2535",borderRadius:"11px",color:"#94a3b8",fontSize:"13px",cursor:"pointer",marginTop:"14px",display:"flex",alignItems:"center",justifyContent:"center",gap:"8px",fontFamily:"inherit"}}>
-          <span style={{fontSize:"16px"}}>G</span> Continue with Google
-        </button>
       </div>
     </Modal>
   );
 }
 
-// SUPABASE MODAL
+// ── SUPABASE MODAL ────────────────────────────────────────────────────────────
 function SupabaseModal({onClose,onConnected}){
   const [url,setUrl]=useState("");
   const [key,setKey]=useState("");
-  const [step,setStep]=useState(1);
-  const inp={width:"100%",background:"#080b14",border:"1px solid #1e2535",borderRadius:"10px",padding:"11px 14px",color:"#e2e8f0",fontSize:"12px",outline:"none",fontFamily:"'Fira Code',monospace",marginBottom:"10px",display:"block"};
+  const [done,setDone]=useState(false);
+  const fi={width:"100%",background:"#0a0c12",border:"1px solid #1e2535",borderRadius:"10px",padding:"11px 14px",color:"#e2e8f0",fontSize:"12px",outline:"none",fontFamily:"'Fira Code',monospace",marginBottom:"12px",display:"block"};
   return(
     <Modal onClose={onClose} width="460px">
-      <div style={{padding:"26px"}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"18px"}}>
-          <div style={{display:"flex",alignItems:"center",gap:"11px"}}>
-            <div style={{width:"36px",height:"36px",background:"linear-gradient(135deg,#3ecf8e,#1a8c57)",borderRadius:"10px",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"18px"}}>🗄️</div>
+      <div style={{padding:"28px"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"20px"}}>
+          <div style={{display:"flex",gap:"12px",alignItems:"center"}}>
+            <div style={{width:"40px",height:"40px",background:"linear-gradient(135deg,#3ecf8e,#1a9962)",borderRadius:"11px",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"20px"}}>🗄️</div>
             <div>
-              <div style={{fontWeight:"700",fontSize:"15px"}}>Connect Supabase</div>
-              <div style={{fontSize:"11px",color:"#475569",marginTop:"2px"}}>Add database, authentication & storage</div>
+              <div style={{fontWeight:"700",fontSize:"16px"}}>Connect Supabase</div>
+              <div style={{fontSize:"12px",color:"#475569",marginTop:"2px"}}>Add full backend to your website</div>
             </div>
           </div>
-          <button onClick={onClose} style={{background:"none",border:"none",color:"#475569",cursor:"pointer",fontSize:"18px"}}>✕</button>
+          <button onClick={onClose} style={{background:"none",border:"none",color:"#475569",cursor:"pointer",fontSize:"20px"}}>×</button>
         </div>
-        {step===1?(
+        {!done?(
           <>
-            <div style={{background:"rgba(62,207,142,.06)",border:"1px solid rgba(62,207,142,.15)",borderRadius:"10px",padding:"13px 15px",marginBottom:"20px",fontSize:"12px",color:"#6ee7b7",lineHeight:"1.65"}}>
-              ✅ Once connected, you can ask BuildAI to add user sign up/in, save data to a database, upload files, and run server-side logic — all from a simple prompt.
-            </div>
-            <div style={{display:"flex",gap:"8px",marginBottom:"16px"}}>
-              {[["Auth","🔐 User auth"],["Database","🗄️ PostgreSQL"],["Storage","📁 Files"],["Edge Fn","⚡ Serverless"]].map(([k,v])=>(
-                <div key={k} style={{flex:1,padding:"9px 6px",background:"#080b14",border:"1px solid #1e2535",borderRadius:"9px",textAlign:"center",fontSize:"10px",color:"#64748b"}}>{v}</div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"8px",marginBottom:"20px"}}>
+              {[["🔐","User Auth","Sign up, sign in, OAuth"],["🗄️","PostgreSQL","Tables & queries"],["📁","File Storage","Images & documents"],["⚡","Edge Functions","Serverless backend"]].map(([ic,t,d])=>(
+                <div key={t} style={{padding:"12px",background:"#0a0c12",border:"1px solid #1e2535",borderRadius:"11px"}}>
+                  <div style={{fontSize:"18px",marginBottom:"5px"}}>{ic}</div>
+                  <div style={{fontSize:"12px",fontWeight:"600",color:"#c4d4f0",marginBottom:"2px"}}>{t}</div>
+                  <div style={{fontSize:"10.5px",color:"#475569"}}>{d}</div>
+                </div>
               ))}
             </div>
-            <div style={{fontSize:"12px",color:"#64748b",marginBottom:"6px",fontWeight:"500"}}>Supabase Project URL</div>
-            <input style={inp} placeholder="https://xxxx.supabase.co" value={url} onChange={e=>setUrl(e.target.value)}/>
-            <div style={{fontSize:"12px",color:"#64748b",marginBottom:"6px",fontWeight:"500"}}>Supabase Anon Key</div>
-            <input style={inp} placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." value={key} onChange={e=>setKey(e.target.value)}/>
-            <div style={{fontSize:"11px",color:"#334155",marginBottom:"18px"}}>
-              Find these in your <span style={{color:"#3ecf8e",cursor:"pointer",textDecoration:"underline"}}>Supabase dashboard</span> → Settings → API
+            <div style={{background:"rgba(62,207,142,.07)",border:"1px solid rgba(62,207,142,.18)",borderRadius:"11px",padding:"13px 15px",marginBottom:"20px",fontSize:"12px",color:"#6ee7b7",lineHeight:"1.65"}}>
+              ✅ Once connected, just tell BuildAI: <em>"Add user sign up and login"</em> or <em>"Save form data to database"</em> — it handles everything automatically.
             </div>
-            <button onClick={()=>setStep(2)} style={{width:"100%",padding:"12px",background:"linear-gradient(135deg,#3ecf8e,#1a8c57)",border:"none",borderRadius:"11px",color:"#fff",fontSize:"14px",fontWeight:"700",cursor:"pointer"}}>
+            <label style={{fontSize:"12px",color:"#64748b",fontWeight:"500",display:"block",marginBottom:"5px"}}>Supabase Project URL</label>
+            <input style={fi} placeholder="https://xxxx.supabase.co" value={url} onChange={e=>setUrl(e.target.value)}/>
+            <label style={{fontSize:"12px",color:"#64748b",fontWeight:"500",display:"block",marginBottom:"5px"}}>Supabase Anon Key</label>
+            <input style={fi} placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." value={key} onChange={e=>setKey(e.target.value)}/>
+            <p style={{fontSize:"11px",color:"#334155",marginBottom:"18px"}}>
+              Find these at <span style={{color:"#3ecf8e",cursor:"pointer",textDecoration:"underline"}}>supabase.com/dashboard</span> → Your Project → Settings → API
+            </p>
+            <button onClick={()=>setDone(true)} style={{width:"100%",padding:"13px",background:"linear-gradient(135deg,#3ecf8e,#1a9962)",border:"none",borderRadius:"11px",color:"#fff",fontSize:"14px",fontWeight:"700",cursor:"pointer"}}>
               Connect Supabase →
             </button>
           </>
         ):(
           <div style={{textAlign:"center",padding:"16px 0 8px"}}>
-            <div style={{fontSize:"48px",marginBottom:"14px",animation:"float 2s ease-in-out infinite"}}>🎉</div>
-            <div style={{fontWeight:"800",fontSize:"17px",marginBottom:"8px",color:"#3ecf8e"}}>Supabase Connected!</div>
-            <div style={{fontSize:"13px",color:"#64748b",marginBottom:"22px",lineHeight:"1.65"}}>
-              Your project now has a full backend. Ask BuildAI to add user authentication, save data, upload images, or run server code.
-            </div>
-            <div style={{display:"flex",flexDirection:"column",gap:"7px",textAlign:"left",marginBottom:"20px"}}>
-              {["✅ User Authentication (sign up / sign in / OAuth)","✅ PostgreSQL Database (tables, queries, migrations)","✅ File & Image Storage","✅ Edge Functions (serverless backend logic)","✅ Real-time subscriptions"].map(f=>(
-                <div key={f} style={{padding:"10px 13px",background:"#080b14",border:"1px solid #1e2535",borderRadius:"9px",fontSize:"12px",color:"#94a3b8"}}>{f}</div>
+            <div style={{fontSize:"52px",marginBottom:"14px",animation:"float 2s ease-in-out infinite"}}>🎉</div>
+            <div style={{fontWeight:"800",fontSize:"18px",color:"#3ecf8e",marginBottom:"8px"}}>Supabase Connected!</div>
+            <p style={{fontSize:"13px",color:"#64748b",marginBottom:"22px",lineHeight:"1.7"}}>Your project now has a full backend. Ask BuildAI to add auth, database, file uploads, or any backend feature.</p>
+            <div style={{display:"flex",flexDirection:"column",gap:"7px",textAlign:"left",marginBottom:"22px"}}>
+              {["✅ User Authentication (email, Google, GitHub OAuth)","✅ PostgreSQL Database — tables, queries, joins","✅ File & Image Storage with CDN","✅ Edge Functions (serverless API routes)","✅ Real-time data subscriptions"].map(f=>(
+                <div key={f} style={{padding:"10px 13px",background:"#0a0c12",border:"1px solid #1e2535",borderRadius:"9px",fontSize:"12px",color:"#94a3b8"}}>{f}</div>
               ))}
             </div>
-            <button onClick={()=>{onConnected();onClose();}} style={{width:"100%",padding:"12px",background:"linear-gradient(135deg,#4f46e5,#7c3aed)",border:"none",borderRadius:"11px",color:"#fff",fontSize:"14px",fontWeight:"700",cursor:"pointer"}}>
-              Start building with Supabase →
+            <button onClick={()=>{onConnected();onClose();}} style={{width:"100%",padding:"13px",background:"linear-gradient(135deg,#4f46e5,#7c3aed)",border:"none",borderRadius:"11px",color:"#fff",fontSize:"14px",fontWeight:"700",cursor:"pointer"}}>
+              Start building →
             </button>
           </div>
         )}
@@ -191,27 +193,27 @@ function SupabaseModal({onClose,onConnected}){
   );
 }
 
-// SHARE MODAL
+// ── SHARE MODAL ───────────────────────────────────────────────────────────────
 function ShareModal({onClose}){
   const [copied,setCopied]=useState(false);
-  const link="https://buildai.app/share/my-project-x7k2p";
+  const link="https://buildai.app/share/nova-saas-x7k2p";
   return(
     <Modal onClose={onClose} width="400px">
-      <div style={{padding:"26px"}}>
+      <div style={{padding:"28px"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"22px"}}>
-          <div style={{fontWeight:"700",fontSize:"15px"}}>🔗 Share Project</div>
-          <button onClick={onClose} style={{background:"none",border:"none",color:"#475569",cursor:"pointer",fontSize:"18px"}}>✕</button>
+          <div style={{fontWeight:"700",fontSize:"16px"}}>Share Project</div>
+          <button onClick={onClose} style={{background:"none",border:"none",color:"#475569",cursor:"pointer",fontSize:"20px"}}>×</button>
         </div>
-        <div style={{fontSize:"12px",color:"#64748b",marginBottom:"8px",fontWeight:"500"}}>Share link</div>
+        <label style={{fontSize:"12px",color:"#64748b",fontWeight:"500",display:"block",marginBottom:"7px"}}>Share link</label>
         <div style={{display:"flex",gap:"7px",marginBottom:"20px"}}>
-          <input readOnly value={link} style={{flex:1,background:"#080b14",border:"1px solid #1e2535",borderRadius:"9px",padding:"10px 12px",color:"#6366f1",fontSize:"11.5px",outline:"none",fontFamily:"'Fira Code',monospace"}}/>
-          <button onClick={()=>setCopied(true)} style={{padding:"10px 16px",background:copied?"#059669":"#1e2535",border:"none",borderRadius:"9px",color:"#fff",fontSize:"12px",fontWeight:"600",cursor:"pointer",transition:"all .2s",whiteSpace:"nowrap"}}>
+          <input readOnly value={link} style={{flex:1,background:"#0a0c12",border:"1px solid #1e2535",borderRadius:"10px",padding:"10px 13px",color:"#6366f1",fontSize:"12px",outline:"none",fontFamily:"'Fira Code',monospace"}}/>
+          <button onClick={()=>setCopied(true)} style={{padding:"10px 16px",background:copied?"#059669":"#1e2535",border:"none",borderRadius:"10px",color:"#fff",fontSize:"12px",fontWeight:"600",cursor:"pointer",transition:"all .2s",whiteSpace:"nowrap"}}>
             {copied?"✓ Copied!":"Copy"}
           </button>
         </div>
-        <div style={{fontSize:"12px",color:"#64748b",marginBottom:"10px",fontWeight:"500"}}>Who can access</div>
-        {[["👁️ View only","Anyone with link can see the preview & code",true],["✏️ Can edit","Collaborators can make changes",false],["🔒 Private","Only you can access",false]].map(([t,d,sel])=>(
-          <div key={t} style={{display:"flex",alignItems:"center",gap:"12px",padding:"12px 14px",background:sel?"#0f1a2e":"#080b14",border:`1px solid ${sel?"#1e3a5f":"#1e2535"}`,borderRadius:"10px",marginBottom:"7px",cursor:"pointer"}}>
+        <label style={{fontSize:"12px",color:"#64748b",fontWeight:"500",display:"block",marginBottom:"10px"}}>Who can access</label>
+        {[["👁 View only","Anyone with link can preview the website",true],["✏️ Can edit","Collaborators can make changes",false],["🔒 Private","Only you can access",false]].map(([t,d,sel])=>(
+          <div key={t} style={{display:"flex",alignItems:"center",gap:"12px",padding:"12px 14px",background:sel?"#0f1a2e":"#0a0c12",border:`1px solid ${sel?"#1e3a5f":"#1e2535"}`,borderRadius:"11px",marginBottom:"8px",cursor:"pointer"}}>
             <div style={{flex:1}}>
               <div style={{fontSize:"13px",fontWeight:"500",color:sel?"#c4d4f0":"#475569"}}>{t}</div>
               <div style={{fontSize:"11px",color:"#334155",marginTop:"2px"}}>{d}</div>
@@ -219,9 +221,9 @@ function ShareModal({onClose}){
             {sel&&<div style={{width:"8px",height:"8px",borderRadius:"50%",background:"#6366f1",flexShrink:0}}/>}
           </div>
         ))}
-        <div style={{marginTop:"16px",display:"flex",gap:"7px"}}>
-          {["🐦 Twitter","💼 LinkedIn","📧 Email"].map(s=>(
-            <button key={s} style={{flex:1,padding:"9px",background:"#080b14",border:"1px solid #1e2535",borderRadius:"9px",color:"#475569",fontSize:"11px",cursor:"pointer",fontFamily:"inherit"}}>{s}</button>
+        <div style={{display:"flex",gap:"7px",marginTop:"16px"}}>
+          {["𝕏 Twitter","💼 LinkedIn","📧 Email"].map(s=>(
+            <button key={s} style={{flex:1,padding:"9px",background:"#0a0c12",border:"1px solid #1e2535",borderRadius:"9px",color:"#475569",fontSize:"11px",cursor:"pointer",fontFamily:"inherit"}}>{s}</button>
           ))}
         </div>
       </div>
@@ -229,45 +231,49 @@ function ShareModal({onClose}){
   );
 }
 
-// PUBLISH MODAL
+// ── PUBLISH MODAL ─────────────────────────────────────────────────────────────
 function PublishModal({onClose}){
   const [done,setDone]=useState(false);
+  const [custom,setCustom]=useState("");
   return(
     <Modal onClose={onClose} width="420px">
-      <div style={{padding:"26px"}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"6px"}}>
-          <div style={{fontWeight:"700",fontSize:"15px"}}>🚀 Publish Website</div>
-          <button onClick={onClose} style={{background:"none",border:"none",color:"#475569",cursor:"pointer",fontSize:"18px"}}>✕</button>
+      <div style={{padding:"28px"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"8px"}}>
+          <div style={{fontWeight:"700",fontSize:"16px"}}>Publish Website</div>
+          <button onClick={onClose} style={{background:"none",border:"none",color:"#475569",cursor:"pointer",fontSize:"20px"}}>×</button>
         </div>
         {!done?(
           <>
-            <div style={{fontSize:"12px",color:"#475569",marginBottom:"20px",marginTop:"6px"}}>Your website goes live instantly on a public URL.</div>
-            <div style={{background:"#080b14",border:"1px solid #1e2535",borderRadius:"12px",padding:"16px",marginBottom:"12px"}}>
-              <div style={{fontSize:"11px",color:"#475569",marginBottom:"6px",fontWeight:"500"}}>FREE · Instant</div>
-              <div style={{fontSize:"15px",fontWeight:"700",color:"#6366f1",marginBottom:"4px"}}>my-project.buildai.app</div>
-              <div style={{fontSize:"11px",color:"#334155"}}>Public URL, always available</div>
+            <p style={{fontSize:"13px",color:"#64748b",marginBottom:"22px",marginTop:"4px"}}>Your site goes live on a public URL in seconds.</p>
+            <div style={{background:"#0a0c12",border:"2px solid #4f46e5",borderRadius:"13px",padding:"16px 18px",marginBottom:"10px",cursor:"pointer"}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"4px"}}>
+                <div style={{fontSize:"11px",color:"#6366f1",fontWeight:"700",textTransform:"uppercase",letterSpacing:"1px"}}>Free · Instant</div>
+                <div style={{width:"8px",height:"8px",borderRadius:"50%",background:"#6366f1"}}/>
+              </div>
+              <div style={{fontSize:"15px",fontWeight:"700",color:"#a78bfa"}}>nova-saas.buildai.app</div>
+              <div style={{fontSize:"11px",color:"#475569",marginTop:"3px"}}>Always-on public URL</div>
             </div>
-            <div style={{background:"#080b14",border:"1px solid #1e2535",borderRadius:"12px",padding:"16px",marginBottom:"20px",opacity:.5}}>
-              <div style={{fontSize:"11px",color:"#475569",marginBottom:"6px",fontWeight:"500"}}>PRO · Custom domain</div>
-              <div style={{fontSize:"13px",color:"#64748b"}}>yourdomain.com</div>
+            <div style={{background:"#0a0c12",border:"1px solid #1e2535",borderRadius:"13px",padding:"16px 18px",marginBottom:"20px",opacity:.6}}>
+              <div style={{fontSize:"11px",color:"#475569",fontWeight:"700",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Pro · Custom Domain</div>
+              <input value={custom} onChange={e=>setCustom(e.target.value)} placeholder="yoursite.com" style={{width:"100%",background:"#060810",border:"1px solid #1e2535",borderRadius:"8px",padding:"9px 12px",color:"#e2e8f0",fontSize:"13px",outline:"none",fontFamily:"inherit"}}/>
             </div>
-            <div style={{fontSize:"12px",color:"#334155",marginBottom:"18px"}}>
-              ⚡ Security review will run automatically before publish
+            <div style={{fontSize:"12px",color:"#334155",marginBottom:"18px",display:"flex",alignItems:"center",gap:"7px"}}>
+              <span style={{color:"#6366f1"}}>🔒</span> SSL certificate applied automatically
             </div>
-            <button onClick={()=>setDone(true)} style={{width:"100%",padding:"13px",background:"linear-gradient(135deg,#059669,#10b981)",border:"none",borderRadius:"11px",color:"#fff",fontSize:"14px",fontWeight:"700",cursor:"pointer"}}>
+            <button onClick={()=>setDone(true)} style={{width:"100%",padding:"14px",background:"linear-gradient(135deg,#059669,#10b981)",border:"none",borderRadius:"12px",color:"#fff",fontSize:"15px",fontWeight:"700",cursor:"pointer",letterSpacing:"-0.2px"}}>
               🚀 Publish now
             </button>
           </>
         ):(
-          <div style={{textAlign:"center",padding:"20px 0 10px"}}>
-            <div style={{fontSize:"48px",marginBottom:"14px",animation:"float 2s ease-in-out infinite"}}>🎉</div>
-            <div style={{fontWeight:"900",fontSize:"18px",marginBottom:"8px"}}>Your site is live!</div>
-            <div style={{padding:"14px 18px",background:"rgba(99,102,241,.08)",border:"1px solid rgba(99,102,241,.2)",borderRadius:"12px",marginBottom:"20px"}}>
-              <div style={{fontSize:"14px",color:"#a78bfa",fontFamily:"'Fira Code',monospace",fontWeight:"600"}}>my-project.buildai.app</div>
+          <div style={{textAlign:"center",padding:"22px 0 10px"}}>
+            <div style={{fontSize:"52px",marginBottom:"14px",animation:"float 2s ease-in-out infinite"}}>🎉</div>
+            <div style={{fontWeight:"900",fontSize:"20px",marginBottom:"8px",letterSpacing:"-0.5px"}}>Your site is live!</div>
+            <div style={{padding:"14px 18px",background:"rgba(99,102,241,.08)",border:"1px solid rgba(99,102,241,.2)",borderRadius:"12px",marginBottom:"22px"}}>
+              <div style={{fontSize:"15px",color:"#a78bfa",fontFamily:"'Fira Code',monospace",fontWeight:"700"}}>nova-saas.buildai.app</div>
             </div>
             <div style={{display:"flex",gap:"8px"}}>
-              <button style={{flex:1,padding:"11px",background:"linear-gradient(135deg,#4f46e5,#7c3aed)",border:"none",borderRadius:"10px",color:"#fff",fontSize:"13px",fontWeight:"600",cursor:"pointer"}}>Open site ↗</button>
-              <button onClick={onClose} style={{flex:1,padding:"11px",background:"#080b14",border:"1px solid #1e2535",borderRadius:"10px",color:"#64748b",fontSize:"13px",cursor:"pointer"}}>Done</button>
+              <button style={{flex:1,padding:"12px",background:"linear-gradient(135deg,#4f46e5,#7c3aed)",border:"none",borderRadius:"10px",color:"#fff",fontSize:"13px",fontWeight:"600",cursor:"pointer"}}>Open site ↗</button>
+              <button onClick={onClose} style={{flex:1,padding:"12px",background:"#0a0c12",border:"1px solid #1e2535",borderRadius:"10px",color:"#64748b",fontSize:"13px",cursor:"pointer"}}>Done</button>
             </div>
           </div>
         )}
@@ -276,148 +282,104 @@ function PublishModal({onClose}){
   );
 }
 
-// VERSION PANEL
-function VersionPanel({onClose}){
-  return(
-    <div style={{position:"absolute",top:"36px",left:0,width:"260px",background:"#0c0f1a",border:"1px solid #1e2535",borderRadius:"12px",zIndex:300,animation:"slideIn .15s ease",boxShadow:"0 16px 48px rgba(0,0,0,.5)"}}>
-      <div style={{padding:"11px 14px",borderBottom:"1px solid #1e2535",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-        <span style={{fontSize:"12px",fontWeight:"600"}}>Version History</span>
-        <button onClick={onClose} style={{background:"none",border:"none",color:"#475569",cursor:"pointer",fontSize:"14px"}}>✕</button>
-      </div>
-      {VERSION_HISTORY.map(v=>(
-        <div key={v.id} style={{padding:"10px 14px",borderBottom:"1px solid #0f1322",display:"flex",alignItems:"center",gap:"10px",cursor:"pointer",background:v.active?"#0f1a2e":"transparent"}}>
-          <div style={{width:"6px",height:"6px",borderRadius:"50%",background:v.active?"#6366f1":"#1e2535",flexShrink:0}}/>
-          <div style={{flex:1}}>
-            <div style={{fontSize:"12px",color:v.active?"#c4d4f0":"#475569",fontWeight:v.active?"600":"400"}}>{v.label}</div>
-            <div style={{fontSize:"10px",color:"#334155",marginTop:"1px"}}>{v.time}</div>
-          </div>
-          {v.active&&<span style={{fontSize:"10px",color:"#6366f1",fontWeight:"600"}}>Current</span>}
-        </div>
-      ))}
-      <div style={{padding:"10px 14px",fontSize:"11px",color:"#334155",textAlign:"center"}}>Click any version to restore</div>
-    </div>
-  );
-}
-
-// HOME PAGE
+// ── HOMEPAGE (Lovable-inspired gradient) ──────────────────────────────────────
 function HomePage({onStart,onOpenAuth,user}){
   const [input,setInput]=useState("");
-  const go=(t)=>{const text=(t||input).trim();if(text)onStart(text);};
+  const go=(t)=>{const tx=(t||input).trim();if(tx)onStart(tx);};
+
   return(
-    <div style={{height:"100vh",overflowY:"auto",background:"#060810",position:"relative"}}>
-      <div style={{position:"fixed",top:"-10%",left:"30%",width:"700px",height:"500px",background:"radial-gradient(ellipse,rgba(99,102,241,.09) 0%,transparent 70%)",pointerEvents:"none",zIndex:0}}/>
-      <div style={{position:"fixed",bottom:"5%",right:"5%",width:"400px",height:"300px",background:"radial-gradient(ellipse,rgba(124,58,237,.06) 0%,transparent 70%)",pointerEvents:"none",zIndex:0}}/>
-      {/* NAV */}
-      <nav style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 48px",borderBottom:"1px solid rgba(255,255,255,.04)",position:"sticky",top:0,background:"rgba(6,8,16,.9)",backdropFilter:"blur(20px)",zIndex:100}}>
-        <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
-          <div style={{width:"28px",height:"28px",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",borderRadius:"8px",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"14px"}}>⚡</div>
-          <span style={{fontWeight:"900",fontSize:"16px",letterSpacing:"-0.5px"}}>BuildAI</span>
-          <span style={{padding:"2px 8px",background:"rgba(99,102,241,.15)",border:"1px solid rgba(99,102,241,.25)",borderRadius:"999px",fontSize:"10px",color:"#a78bfa",fontWeight:"700"}}>BETA</span>
-        </div>
-        <div style={{display:"flex",alignItems:"center",gap:"28px"}}>
-          <div style={{display:"flex",gap:"22px"}}>
-            {["Features","Pricing","Docs","Showcase"].map(l=>(
-              <span key={l} style={{fontSize:"13px",color:"#475569",cursor:"pointer"}}>{l}</span>
-            ))}
+    <div style={{display:"flex",height:"100vh",overflow:"hidden"}}>
+      {/* LEFT SIDEBAR — like Lovable */}
+      <div style={{width:"200px",flexShrink:0,background:"#fff",borderRight:"1px solid #e5e7eb",display:"flex",flexDirection:"column",zIndex:10}}>
+        <div style={{padding:"14px 14px 10px",borderBottom:"1px solid #f1f5f9"}}>
+          <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"16px"}}>
+            <div style={{width:"26px",height:"26px",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",borderRadius:"7px",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px"}}>⚡</div>
+            <div>
+              <div style={{fontWeight:"700",fontSize:"13px",color:"#1e293b"}}>My BuildAI</div>
+            </div>
+            <div style={{marginLeft:"auto",width:"16px",height:"16px",borderRadius:"50%",background:"#e5e7eb",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"8px",color:"#64748b",cursor:"pointer"}}>▾</div>
           </div>
-          <div style={{display:"flex",gap:"8px"}}>
-            {user?(
-              <button onClick={()=>onStart("")} style={{padding:"8px 18px",background:"linear-gradient(135deg,#4f46e5,#7c3aed)",border:"none",borderRadius:"9px",color:"#fff",fontSize:"13px",fontWeight:"600",cursor:"pointer"}}>Dashboard →</button>
-            ):(
-              <>
-                <button onClick={()=>onOpenAuth("signin")} style={{padding:"8px 18px",background:"transparent",border:"1px solid #1e2535",borderRadius:"9px",color:"#94a3b8",fontSize:"13px",cursor:"pointer"}}>Sign in</button>
-                <button onClick={()=>onOpenAuth("signup")} style={{padding:"8px 18px",background:"linear-gradient(135deg,#4f46e5,#7c3aed)",border:"none",borderRadius:"9px",color:"#fff",fontSize:"13px",cursor:"pointer",fontWeight:"600"}}>Get started free</button>
-              </>
-            )}
-          </div>
+          {[["🏠","Home",true],["🔍","Search",false],["📚","Resources",false]].map(([ic,lb,act])=>(
+            <div key={lb} style={{display:"flex",alignItems:"center",gap:"9px",padding:"7px 9px",borderRadius:"8px",background:act?"#f1f5f9":"transparent",cursor:"pointer",marginBottom:"2px"}}>
+              <span style={{fontSize:"13px"}}>{ic}</span>
+              <span style={{fontSize:"13px",color:act?"#1e293b":"#64748b",fontWeight:act?"500":"400"}}>{lb}</span>
+            </div>
+          ))}
         </div>
-      </nav>
-      {/* HERO */}
-      <div style={{textAlign:"center",padding:"90px 24px 60px",position:"relative",zIndex:1}}>
-        <div style={{display:"inline-flex",alignItems:"center",gap:"8px",padding:"5px 14px 5px 8px",background:"rgba(99,102,241,.08)",border:"1px solid rgba(99,102,241,.2)",borderRadius:"999px",fontSize:"12px",color:"#a78bfa",marginBottom:"28px",animation:"fadeUp .5s ease"}}>
-          <span style={{padding:"2px 8px",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",borderRadius:"999px",color:"#fff",fontSize:"10px",fontWeight:"700"}}>NEW</span>
-          Supabase integration — add auth & database in one prompt
+        <div style={{padding:"10px 14px"}}>
+          <div style={{fontSize:"11px",fontWeight:"600",color:"#94a3b8",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Projects</div>
+          {[["All projects"],["⭐ Starred"],["👤 Created by me"],["👥 Shared with me"]].map(([lb])=>(
+            <div key={lb} style={{display:"flex",alignItems:"center",gap:"9px",padding:"6px 9px",borderRadius:"7px",cursor:"pointer",marginBottom:"1px"}} onMouseEnter={e=>e.currentTarget.style.background="#f1f5f9"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+              <span style={{fontSize:"12.5px",color:"#64748b"}}>{lb}</span>
+            </div>
+          ))}
         </div>
-        <h1 style={{fontSize:"clamp(42px,6vw,78px)",fontWeight:"900",lineHeight:"1.04",letterSpacing:"-3px",marginBottom:"22px",animation:"fadeUp .6s ease"}}>
-          Build websites<br/>
-          <span style={{background:"linear-gradient(135deg,#6366f1,#a78bfa,#ec4899)",backgroundSize:"200% 200%",animation:"gradMove 4s ease infinite",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>the AI way</span>
-        </h1>
-        <p style={{fontSize:"18px",color:"#475569",maxWidth:"540px",margin:"0 auto 44px",lineHeight:"1.75",animation:"fadeUp .7s ease"}}>
-          Describe any website. Two AI models build and review through 3 rounds. Live preview, Supabase backend, GitHub sync — all included.
-        </p>
-        {/* PROMPT BOX */}
-        <div style={{maxWidth:"680px",margin:"0 auto",animation:"fadeUp .8s ease"}}>
-          <div style={{background:"#0c0f1a",border:"1px solid #1e2535",borderRadius:"18px",padding:"5px 5px 5px 20px",display:"flex",alignItems:"center",gap:"10px",marginBottom:"14px",boxShadow:"0 20px 60px rgba(0,0,0,.35)"}}>
-            <span style={{fontSize:"20px"}}>🌐</span>
-            <input style={{flex:1,background:"transparent",border:"none",outline:"none",color:"#e2e8f0",fontSize:"15px",padding:"13px 0",fontFamily:"inherit"}} placeholder="Describe the website you want to build..." value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&go()}/>
-            <button onClick={()=>go()} disabled={!input.trim()} style={{padding:"12px 24px",background:input.trim()?"linear-gradient(135deg,#4f46e5,#7c3aed)":"#1e2535",border:"none",borderRadius:"13px",color:input.trim()?"#fff":"#334155",fontSize:"14px",fontWeight:"700",cursor:input.trim()?"pointer":"not-allowed",transition:"all .2s",whiteSpace:"nowrap"}}>
-              Build it →
-            </button>
+        <div style={{padding:"8px 14px"}}>
+          <div style={{fontSize:"11px",fontWeight:"600",color:"#94a3b8",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"8px"}}>Recents</div>
+          {PAST_PROJECTS.slice(0,3).map(p=>(
+            <div key={p.id} onClick={()=>onStart("")} style={{display:"flex",alignItems:"center",gap:"8px",padding:"6px 9px",borderRadius:"7px",cursor:"pointer",marginBottom:"2px"}} onMouseEnter={e=>e.currentTarget.style.background="#f1f5f9"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+              <span style={{fontSize:"12px"}}>📄</span>
+              <span style={{fontSize:"12px",color:"#374151",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",maxWidth:"120px"}}>{p.name}</span>
+            </div>
+          ))}
+        </div>
+        <div style={{flex:1}}/>
+        <div style={{padding:"12px 14px",borderTop:"1px solid #f1f5f9"}}>
+          {!user?(
+            <div style={{display:"flex",gap:"6px"}}>
+              <button onClick={()=>onOpenAuth("signin")} style={{flex:1,padding:"8px",background:"transparent",border:"1px solid #e5e7eb",borderRadius:"8px",color:"#374151",fontSize:"11.5px",cursor:"pointer",fontFamily:"inherit"}}>Sign in</button>
+              <button onClick={()=>onOpenAuth("signup")} style={{flex:1,padding:"8px",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",border:"none",borderRadius:"8px",color:"#fff",fontSize:"11.5px",cursor:"pointer",fontFamily:"inherit",fontWeight:"600"}}>Sign up</button>
+            </div>
+          ):(
+            <div style={{display:"flex",alignItems:"center",gap:"8px",padding:"8px 10px",background:"#f8fafc",borderRadius:"9px"}}>
+              <div style={{width:"24px",height:"24px",borderRadius:"50%",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"11px",fontWeight:"700",color:"#fff"}}>{user.name[0]}</div>
+              <div style={{fontSize:"12px",fontWeight:"600",color:"#1e293b"}}>{user.name}</div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* RIGHT — gradient hero like Lovable */}
+      <div style={{flex:1,position:"relative",overflow:"hidden",display:"flex",alignItems:"center",justifyContent:"center"}}>
+        {/* Animated gradient mesh */}
+        <div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,#dbeafe 0%,#e0e7ff 20%,#ede9fe 35%,#fce7f3 55%,#fef3c7 75%,#ffd6cc 90%,#ffb347 100%)",animation:"meshMove 12s ease-in-out infinite"}}/>
+        <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at 30% 40%,rgba(99,102,241,.25) 0%,transparent 50%)"}}/>
+        <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at 70% 60%,rgba(236,72,153,.2) 0%,transparent 50%)"}}/>
+        <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at 50% 80%,rgba(249,115,22,.18) 0%,transparent 45%)"}}/>
+
+        {/* Center content */}
+        <div style={{position:"relative",zIndex:1,textAlign:"center",padding:"0 24px",maxWidth:"700px",width:"100%",animation:"fadeUp .6s ease"}}>
+          <h1 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:"700",color:"#1e293b",marginBottom:"28px",letterSpacing:"-0.8px",lineHeight:1.2}}>
+            {user?`What should we build, ${user.name}?`:"What should we build?"}
+          </h1>
+          {/* Prompt box — exactly like Lovable */}
+          <div style={{background:"rgba(255,255,255,.9)",backdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,.8)",borderRadius:"16px",padding:"4px 4px 4px 18px",display:"flex",alignItems:"center",gap:"10px",boxShadow:"0 8px 40px rgba(0,0,0,.12)",marginBottom:"18px"}}>
+            <input
+              style={{flex:1,background:"transparent",border:"none",outline:"none",color:"#1e293b",fontSize:"15px",padding:"13px 0",fontFamily:"inherit"}}
+              placeholder="Ask Lovable to create a landing page for my..."
+              value={input} onChange={e=>setInput(e.target.value)}
+              onKeyDown={e=>e.key==="Enter"&&go()}
+            />
+            <div style={{display:"flex",alignItems:"center",gap:"6px",padding:"4px"}}>
+              <button style={{padding:"6px 12px",background:"transparent",border:"1px solid #e5e7eb",borderRadius:"8px",color:"#64748b",fontSize:"12px",cursor:"pointer",fontFamily:"inherit"}}>Plan</button>
+              <button style={{width:"34px",height:"34px",borderRadius:"9px",background:input.trim()?"linear-gradient(135deg,#6366f1,#8b5cf6)":"#e5e7eb",border:"none",cursor:input.trim()?"pointer":"default",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"15px",color:input.trim()?"#fff":"#94a3b8",transition:"all .2s"}} onClick={()=>go()}>↑</button>
+            </div>
           </div>
+          {/* Example chips */}
           <div style={{display:"flex",flexWrap:"wrap",gap:"7px",justifyContent:"center"}}>
             {EXAMPLES.map(e=>(
-              <button key={e.label} onClick={()=>go(e.text)} style={{padding:"7px 13px",background:"#0a0d17",border:"1px solid #141824",borderRadius:"999px",fontSize:"12px",color:"#475569",cursor:"pointer",display:"flex",alignItems:"center",gap:"5px",fontFamily:"inherit"}}>
+              <button key={e.label} onClick={()=>go(e.text)} style={{padding:"7px 14px",background:"rgba(255,255,255,.75)",backdropFilter:"blur(8px)",border:"1px solid rgba(255,255,255,.9)",borderRadius:"999px",fontSize:"12px",color:"#374151",cursor:"pointer",display:"flex",alignItems:"center",gap:"5px",fontFamily:"inherit",fontWeight:"500"}}>
                 {e.icon} {e.label}
               </button>
             ))}
           </div>
         </div>
-        {/* SOCIAL PROOF */}
-        <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"18px",marginTop:"36px",flexWrap:"wrap",animation:"fadeUp .9s ease"}}>
-          <div style={{display:"flex"}}>
-            {["#6366f1","#8b5cf6","#ec4899","#f59e0b","#10b981"].map((c,i)=>(
-              <div key={i} style={{width:"28px",height:"28px",borderRadius:"50%",background:c,border:"2px solid #060810",marginLeft:i?"-8px":"0",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"11px"}}>{["😊","😎","🤩","🎯","🚀"][i]}</div>
-            ))}
-          </div>
-          <div style={{fontSize:"12px",color:"#334155"}}><span style={{color:"#94a3b8",fontWeight:"600"}}>2,400+</span> websites built this week</div>
-          <div style={{width:"1px",height:"14px",background:"#1e2535"}}/>
-          <div style={{display:"flex",gap:"2px"}}>{"★★★★★".split("").map((s,i)=><span key={i} style={{color:"#f59e0b",fontSize:"13px"}}>{s}</span>)}</div>
-          <div style={{fontSize:"12px",color:"#334155"}}><span style={{color:"#94a3b8",fontWeight:"600"}}>4.9</span>/5 rating</div>
-        </div>
-      </div>
-      {/* HOW IT WORKS */}
-      <div style={{maxWidth:"800px",margin:"0 auto 70px",padding:"0 24px",textAlign:"center"}}>
-        <div style={{fontSize:"11px",fontWeight:"700",color:"#4f46e5",letterSpacing:"2.5px",textTransform:"uppercase",marginBottom:"14px"}}>How it works</div>
-        <div style={{display:"flex",gap:"6px",alignItems:"center",justifyContent:"center",flexWrap:"wrap"}}>
-          {[["1","Describe it"],["→",""],["2","Gemini builds"],["→",""],["3","AI reviews"],["→",""],["4","Live preview"],["→",""],["5","Publish"]].map(([n,t],i)=>(
-            n==="→"?<div key={i} style={{color:"#1e2535",fontSize:"18px"}}>→</div>:(
-              <div key={i} style={{padding:"11px 16px",background:"#0c0f1a",border:"1px solid #1e2535",borderRadius:"12px",minWidth:"96px"}}>
-                <div style={{fontSize:"9px",fontWeight:"700",color:"#4f46e5",marginBottom:"3px",textTransform:"uppercase",letterSpacing:"1px"}}>Step {n}</div>
-                <div style={{fontSize:"12px",fontWeight:"600",color:"#94a3b8"}}>{t}</div>
-              </div>
-            )
-          ))}
-        </div>
-      </div>
-      {/* FEATURES */}
-      <div style={{maxWidth:"980px",margin:"0 auto 80px",padding:"0 24px"}}>
-        <h2 style={{textAlign:"center",fontSize:"30px",fontWeight:"900",letterSpacing:"-1px",marginBottom:"8px"}}>Everything included</h2>
-        <p style={{textAlign:"center",fontSize:"14px",color:"#475569",marginBottom:"36px"}}>No extra tools, no complicated setup. Everything just works.</p>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",gap:"14px"}}>
-          {FEATURES.map(f=>(
-            <div key={f.t} style={{background:"#0a0d17",border:"1px solid #141824",borderRadius:"14px",padding:"22px",transition:"all .25s",cursor:"default"}}
-              onMouseEnter={e=>{e.currentTarget.style.borderColor="#2e3a52";e.currentTarget.style.transform="translateY(-3px)"}}
-              onMouseLeave={e=>{e.currentTarget.style.borderColor="#141824";e.currentTarget.style.transform="translateY(0)"}}>
-              <div style={{fontSize:"24px",marginBottom:"10px"}}>{f.icon}</div>
-              <div style={{fontSize:"13px",fontWeight:"700",marginBottom:"6px",color:"#c4d4f0"}}>{f.t}</div>
-              <div style={{fontSize:"12px",color:"#475569",lineHeight:"1.65"}}>{f.d}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-      {/* CTA */}
-      <div style={{textAlign:"center",padding:"56px 24px 80px",borderTop:"1px solid #0f1322"}}>
-        <h2 style={{fontSize:"34px",fontWeight:"900",letterSpacing:"-1.2px",marginBottom:"12px"}}>Start building for free</h2>
-        <p style={{color:"#475569",marginBottom:"28px",fontSize:"15px"}}>No credit card needed. Describe and build instantly.</p>
-        <button onClick={()=>onStart("")} style={{padding:"16px 42px",background:"linear-gradient(135deg,#4f46e5,#7c3aed)",border:"none",borderRadius:"14px",color:"#fff",fontSize:"16px",fontWeight:"800",cursor:"pointer",boxShadow:"0 8px 32px rgba(99,102,241,.35)"}}>
-          Try BuildAI free →
-        </button>
       </div>
     </div>
   );
 }
 
-// BUILDER VIEW
+// ── BUILDER VIEW ──────────────────────────────────────────────────────────────
 function BuilderView({initialPrompt,user,onGoHome,onOpenAuth}){
   const [projects,setProjects]=useState(PAST_PROJECTS);
   const [activeId,setActiveId]=useState(null);
@@ -434,31 +396,37 @@ function BuilderView({initialPrompt,user,onGoHome,onOpenAuth}){
   const [modal,setModal]=useState(null);
   const [showVersion,setShowVersion]=useState(false);
   const [supaConnected,setSupaConnected]=useState(false);
+  const [visualEdits,setVisualEdits]=useState(false);
+  const [thinkingMsg,setThinkingMsg]=useState(null);
   const timers=useRef([]);
   const bottomRef=useRef(null);
 
-  useEffect(()=>{if(initialPrompt)setTimeout(()=>run(initialPrompt),300);},[]);
-  useEffect(()=>{bottomRef.current?.scrollIntoView({behavior:"smooth"});},[messages,generating]);
+  useEffect(()=>{if(initialPrompt)setTimeout(()=>run(initialPrompt),200);},[]);
+  useEffect(()=>{bottomRef.current?.scrollIntoView({behavior:"smooth"});},[messages,generating,thinkingMsg]);
   const clearTimers=()=>{timers.current.forEach(clearTimeout);timers.current=[];};
 
   const run=(prompt)=>{
     const text=(prompt||input).trim();if(!text||generating)return;
     setInput("");
-    const newP={id:Date.now(),name:text.slice(0,28)+(text.length>28?"...":""),date:"Just now",color:"#6366f1"};
+    const newP={id:Date.now(),name:text.slice(0,26)+(text.length>26?"...":""),date:"Just now",color:"#6366f1"};
     setProjects(p=>[newP,...p]);setActiveId(newP.id);
     setMessages([{role:"user",text}]);
-    setGenerating(true);setCode("");setActiveRound(0);setDoneRounds([]);
+    setGenerating(true);setCode("");setActiveRound(0);setDoneRounds([]);setThinkingMsg(null);
     setStatus("Connecting to AI models...");
     clearTimers();
-    FLOW.forEach(({delay,round,done,msg})=>{
+    FLOW.forEach(({delay,type,round,done,msg})=>{
       const t=setTimeout(()=>{
-        setStatus(msg);setActiveRound(round);
-        if(done){
-          setCode(DEMO_HTML);
-          setDoneRounds(p=>[...new Set([...p,round])]);
-          if(round===3){
-            setGenerating(false);
-            setMessages(p=>[...p,{role:"assistant",text:"✅ All 3 rounds complete! Your website is live in the preview →\n\nTry:\n• Preview / Code tabs above\n• Desktop / Tablet / Mobile toggle\n• Connect Supabase for auth & database\n• Share or Publish buttons in the toolbar"}]);
+        if(type==="thinking"){setThinkingMsg(true);}
+        else if(type==="thinking_done"){setThinkingMsg(false);}
+        else{
+          setStatus(msg);setActiveRound(round);
+          if(done){
+            setCode(DEMO_HTML);
+            setDoneRounds(p=>[...new Set([...p,round])]);
+            if(round===3){
+              setGenerating(false);setThinkingMsg(null);
+              setMessages(p=>[...p,{role:"assistant",thinking:THINKING_STEPS,card:"Design a vibrant SaaS site",text:"Created a vibrant AI-powered SaaS landing page using your stunning color palette! Features hero section with animated gradient effects, feature cards, pricing tiers, and CTAs — all with glowing neon accents on a dark background.",next:["Refine & Customize: Tweak colors, animations, and content via prompts or visual edits.","Master Prompting: Use 'chat mode' to plan features before implementing them."],promo:"Need backend features like user authentication, data storage, or API integrations?"}]);
+            }
           }
         }
       },delay);
@@ -467,103 +435,132 @@ function BuilderView({initialPrompt,user,onGoHome,onOpenAuth}){
   };
 
   const iframeSrc=code?`data:text/html;charset=utf-8,${encodeURIComponent(code)}`:null;
-  const previewW=viewMode==="desktop"?"100%":viewMode==="tablet"?"768px":"375px";
+  const previewW=viewMode==="desktop"?"100%":viewMode==="tablet"?"768px":"390px";
+  const activeName=activeId?projects.find(p=>p.id===activeId)?.name||"New Project":"New Project";
 
   return(
-    <div style={{display:"flex",height:"100vh",background:"#060810",overflow:"hidden",flexDirection:"column"}}>
-      {/* TOP BAR */}
-      <div style={{height:"42px",display:"flex",alignItems:"center",padding:"0 10px",borderBottom:"1px solid #0f1322",background:"#080b14",flexShrink:0,zIndex:50,gap:"6px"}}>
-        {/* Logo */}
-        <div onClick={onGoHome} style={{display:"flex",alignItems:"center",gap:"6px",cursor:"pointer",padding:"0 10px 0 2px",borderRight:"1px solid #0f1322",marginRight:"6px",height:"100%"}}>
-          <div style={{width:"20px",height:"20px",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",borderRadius:"5px",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"10px"}}>⚡</div>
-          <span style={{fontWeight:"800",fontSize:"12.5px",letterSpacing:"-0.3px"}}>BuildAI</span>
+    <div style={{display:"flex",height:"100vh",flexDirection:"column",background:"#0a0a0f",overflow:"hidden"}}>
+
+      {/* ══ TOP BAR — exactly like Lovable ══ */}
+      <div style={{height:"40px",display:"flex",alignItems:"center",padding:"0 8px",borderBottom:"1px solid #1a1d27",background:"#0d0f17",flexShrink:0,gap:"4px",zIndex:100}}>
+
+        {/* Logo + project name */}
+        <div style={{display:"flex",alignItems:"center",gap:"0",marginRight:"4px"}}>
+          <div onClick={onGoHome} style={{display:"flex",alignItems:"center",gap:"6px",cursor:"pointer",padding:"4px 8px",borderRadius:"7px"}} onMouseEnter={e=>e.currentTarget.style.background="#161922"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+            <div style={{width:"18px",height:"18px",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",borderRadius:"4px",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"9px"}}>⚡</div>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:"5px",padding:"4px 9px",background:"#161922",border:"1px solid #1e2535",borderRadius:"8px",cursor:"pointer",maxWidth:"180px"}}>
+            <span style={{fontSize:"11.5px",color:"#94a3b8",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{activeName}</span>
+            <span style={{fontSize:"9px",color:"#475569"}}>▾</span>
+          </div>
         </div>
-        {/* Project name */}
-        <div style={{padding:"4px 10px",background:"#0f1322",border:"1px solid #141824",borderRadius:"7px",fontSize:"11.5px",color:"#64748b",cursor:"pointer",maxWidth:"150px",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
-          {activeId?projects.find(p=>p.id===activeId)?.name||"New Project":"New Project"}
-        </div>
-        {/* Version history */}
-        <div style={{position:"relative"}}>
-          <button onClick={()=>setShowVersion(v=>!v)} style={{padding:"4px 9px",background:showVersion?"#1e2535":"transparent",border:`1px solid ${showVersion?"#2e3a52":"transparent"}`,borderRadius:"6px",color:"#475569",fontSize:"11px",cursor:"pointer",display:"flex",alignItems:"center",gap:"4px",fontFamily:"inherit"}}>
-            🕐 History
-          </button>
-          {showVersion&&<VersionPanel onClose={()=>setShowVersion(false)}/>}
-        </div>
-        {/* Undo/Redo */}
-        {["↩","↪"].map((ic,i)=>(
-          <button key={i} title={i===0?"Undo":"Redo"} style={{width:"26px",height:"26px",background:"transparent",border:"none",borderRadius:"5px",color:"#334155",cursor:"pointer",fontSize:"13px",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"inherit"}}
-            onMouseEnter={e=>e.currentTarget.style.background="#0f1322"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>{ic}</button>
-        ))}
-        <div style={{flex:1}}/>
-        {/* Viewport */}
-        <div style={{display:"flex",gap:"2px",background:"#0a0d17",border:"1px solid #141824",borderRadius:"7px",padding:"2px"}}>
-          {[["desktop","🖥️"],["tablet","📱"],["mobile","📲"]].map(([v,ic])=>(
-            <button key={v} onClick={()=>setViewMode(v)} title={v} style={{width:"26px",height:"22px",background:viewMode===v?"#1e2535":"transparent",border:"none",borderRadius:"5px",cursor:"pointer",fontSize:"11px",transition:"all .15s"}}>
-              {ic}
-            </button>
+
+        {/* Left tools */}
+        <div style={{display:"flex",alignItems:"center",gap:"1px"}}>
+          {/* Back/forward */}
+          {["←","→"].map((ic,i)=>(
+            <button key={i} title={i===0?"Back":"Forward"} style={{width:"26px",height:"26px",background:"transparent",border:"none",borderRadius:"6px",color:"#334155",cursor:"pointer",fontSize:"13px",fontFamily:"inherit"}} onMouseEnter={e=>e.currentTarget.style.background="#161922"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>{ic}</button>
+          ))}
+          {/* Undo/Redo */}
+          {["↩","↪"].map((ic,i)=>(
+            <button key={i} style={{width:"26px",height:"26px",background:"transparent",border:"none",borderRadius:"6px",color:"#334155",cursor:"pointer",fontSize:"12px",fontFamily:"inherit"}} onMouseEnter={e=>e.currentTarget.style.background="#161922"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>{ic}</button>
           ))}
         </div>
-        {/* Supabase */}
-        <button onClick={()=>setModal("supabase")} style={{padding:"5px 11px",background:supaConnected?"rgba(62,207,142,.1)":"#0a0d17",border:"1px solid",borderColor:supaConnected?"rgba(62,207,142,.3)":"#141824",borderRadius:"7px",color:supaConnected?"#3ecf8e":"#475569",fontSize:"11px",fontWeight:"600",cursor:"pointer",display:"flex",alignItems:"center",gap:"4px",fontFamily:"inherit"}}>
-          🗄️ {supaConnected?"Supabase ✓":"Supabase"}
-        </button>
-        {/* GitHub */}
-        <button style={{padding:"5px 11px",background:"#0a0d17",border:"1px solid #141824",borderRadius:"7px",color:"#475569",fontSize:"11px",cursor:"pointer",display:"flex",alignItems:"center",gap:"4px",fontFamily:"inherit"}}>
-          🐙 GitHub
-        </button>
-        {/* Share */}
-        <button onClick={()=>code&&setModal("share")} style={{padding:"5px 11px",background:"#0a0d17",border:"1px solid #141824",borderRadius:"7px",color:code?"#94a3b8":"#2e3655",fontSize:"11px",cursor:code?"pointer":"not-allowed",display:"flex",alignItems:"center",gap:"4px",fontFamily:"inherit"}}>
-          🔗 Share
-        </button>
-        {/* Publish */}
-        <button onClick={()=>code&&setModal("publish")} style={{padding:"5px 14px",background:code?"linear-gradient(135deg,#059669,#10b981)":"#1e2535",border:"none",borderRadius:"7px",color:code?"#fff":"#334155",fontSize:"11px",fontWeight:"700",cursor:code?"pointer":"not-allowed",marginRight:"8px"}}>
-          🚀 Publish
-        </button>
-        {/* User */}
-        {user?(
-          <div style={{width:"26px",height:"26px",borderRadius:"50%",background:"linear-gradient(135deg,#4f46e5,#7c3aed)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"11px",fontWeight:"700",cursor:"pointer"}}>
-            {user.name[0].toUpperCase()}
+
+        {/* Center — tabs like Lovable/Replit */}
+        <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",gap:"3px"}}>
+          {[["preview","👁 Preview"],["code","</> Code"],["console","⬛ Console"]].map(([t,l])=>(
+            <button key={t} onClick={()=>setTab(t)} style={{padding:"5px 12px",background:tab===t?"#1e2535":"transparent",border:`1px solid ${tab===t?"#2e3a52":"transparent"}`,borderRadius:"7px",color:tab===t?"#c4d4f0":"#475569",fontSize:"11.5px",fontWeight:tab===t?"600":"400",cursor:"pointer",fontFamily:"inherit",transition:"all .15s"}}>
+              {l}
+            </button>
+          ))}
+          {/* URL bar */}
+          {code&&(
+            <div style={{display:"flex",alignItems:"center",gap:"6px",padding:"4px 10px",background:"#161922",border:"1px solid #1e2535",borderRadius:"7px",marginLeft:"6px"}}>
+              <span style={{fontSize:"10px"}}>🔒</span>
+              <span style={{fontSize:"11px",color:"#475569",fontFamily:"'Fira Code',monospace"}}>nova-saas.buildai.app</span>
+              <button style={{background:"none",border:"none",color:"#475569",cursor:"pointer",fontSize:"11px",fontFamily:"inherit"}}>⟳</button>
+            </div>
+          )}
+        </div>
+
+        {/* Right tools */}
+        <div style={{display:"flex",alignItems:"center",gap:"4px"}}>
+          {/* Viewport */}
+          <div style={{display:"flex",gap:"1px",background:"#161922",border:"1px solid #1a1d27",borderRadius:"7px",padding:"2px",marginRight:"4px"}}>
+            {[["desktop","🖥"],["tablet","⬜"],["mobile","📱"]].map(([v,ic])=>(
+              <button key={v} onClick={()=>setViewMode(v)} title={v} style={{width:"24px",height:"22px",background:viewMode===v?"#2e3a52":"transparent",border:"none",borderRadius:"5px",cursor:"pointer",fontSize:"10px",transition:"all .15s"}}>{ic}</button>
+            ))}
           </div>
-        ):(
-          <button onClick={()=>onOpenAuth("signin")} style={{padding:"5px 12px",background:"linear-gradient(135deg,#4f46e5,#7c3aed)",border:"none",borderRadius:"7px",color:"#fff",fontSize:"11px",fontWeight:"600",cursor:"pointer",fontFamily:"inherit"}}>
-            Sign in
+
+          {/* Supabase */}
+          <button onClick={()=>setModal("supabase")} style={{padding:"4px 10px",background:supaConnected?"rgba(62,207,142,.1)":"#161922",border:"1px solid",borderColor:supaConnected?"rgba(62,207,142,.3)":"#1e2535",borderRadius:"7px",color:supaConnected?"#3ecf8e":"#475569",fontSize:"11px",fontWeight:"600",cursor:"pointer",display:"flex",alignItems:"center",gap:"4px",fontFamily:"inherit",whiteSpace:"nowrap"}}>
+            🗄️ {supaConnected?"Supabase ✓":"Supabase"}
           </button>
-        )}
+
+          {/* GitHub */}
+          <button style={{width:"28px",height:"28px",background:"#161922",border:"1px solid #1e2535",borderRadius:"7px",color:"#64748b",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"14px",fontFamily:"inherit"}} title="GitHub">
+            🐙
+          </button>
+
+          {/* Share */}
+          <button onClick={()=>code&&setModal("share")} style={{padding:"4px 12px",background:"#161922",border:"1px solid #1e2535",borderRadius:"7px",color:code?"#94a3b8":"#334155",fontSize:"11px",fontWeight:"500",cursor:code?"pointer":"default",fontFamily:"inherit",display:"flex",alignItems:"center",gap:"5px"}}>
+            Share
+          </button>
+
+          {/* Upgrade */}
+          <button style={{padding:"4px 10px",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",border:"none",borderRadius:"7px",color:"#fff",fontSize:"11px",fontWeight:"700",cursor:"pointer",fontFamily:"inherit"}}>
+            + Upgrade
+          </button>
+
+          {/* Publish */}
+          <button onClick={()=>code&&setModal("publish")} style={{padding:"4px 12px",background:code?"linear-gradient(135deg,#059669,#10b981)":"#1e2535",border:"none",borderRadius:"7px",color:code?"#fff":"#334155",fontSize:"11px",fontWeight:"700",cursor:code?"pointer":"default",fontFamily:"inherit"}}>
+            Publish
+          </button>
+
+          {/* Avatar */}
+          {user?(
+            <div style={{width:"26px",height:"26px",borderRadius:"50%",background:"linear-gradient(135deg,#4f46e5,#7c3aed)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"11px",fontWeight:"700",cursor:"pointer",marginLeft:"2px"}}>
+              {user.name[0].toUpperCase()}
+            </div>
+          ):(
+            <button onClick={()=>onOpenAuth("signin")} style={{padding:"4px 12px",background:"linear-gradient(135deg,#4f46e5,#7c3aed)",border:"none",borderRadius:"7px",color:"#fff",fontSize:"11px",fontWeight:"600",cursor:"pointer",fontFamily:"inherit"}}>
+              Sign in
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* MAIN */}
+      {/* ══ BODY ══ */}
       <div style={{flex:1,display:"flex",overflow:"hidden"}}>
+
         {/* Sidebar */}
         {sidebar&&(
-          <div style={{width:"210px",flexShrink:0,display:"flex",flexDirection:"column",background:"#080b14",borderRight:"1px solid #0f1322"}}>
-            <div style={{padding:"9px 10px 8px",borderBottom:"1px solid #0f1322",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-              <span style={{fontSize:"10px",fontWeight:"700",color:"#334155",textTransform:"uppercase",letterSpacing:"1px"}}>Projects</span>
-              <button onClick={()=>setSidebar(false)} style={{background:"none",border:"none",color:"#334155",cursor:"pointer",fontSize:"13px"}}>‹</button>
+          <div style={{width:"200px",flexShrink:0,display:"flex",flexDirection:"column",background:"#0d0f17",borderRight:"1px solid #1a1d27"}}>
+            <div style={{padding:"8px 8px 4px",borderBottom:"1px solid #1a1d27",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              <span style={{fontSize:"10px",fontWeight:"700",color:"#2e3655",textTransform:"uppercase",letterSpacing:"1px"}}>Projects</span>
+              <button onClick={()=>setSidebar(false)} style={{background:"none",border:"none",color:"#2e3655",cursor:"pointer",fontSize:"12px"}}>‹</button>
             </div>
-            <div style={{padding:"8px 8px 4px"}}>
-              <button onClick={()=>{setMessages([]);setCode("");setActiveId(null);setStatus("");setActiveRound(0);setDoneRounds([]);}} style={{width:"100%",padding:"8px",background:"#0f1322",border:"1px dashed #1e2535",borderRadius:"8px",color:"#475569",fontSize:"11px",cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:"6px"}}>
+            <div style={{padding:"7px 8px 4px"}}>
+              <button onClick={()=>{setMessages([]);setCode("");setActiveId(null);setStatus("");setActiveRound(0);setDoneRounds([]);setThinkingMsg(null);}} style={{width:"100%",padding:"7px",background:"#161922",border:"1px dashed #1e2535",borderRadius:"8px",color:"#475569",fontSize:"11px",cursor:"pointer",fontFamily:"inherit"}}>
                 ＋ New Project
               </button>
             </div>
             <div style={{flex:1,overflowY:"auto",padding:"0 8px 8px"}}>
-              <div style={{fontSize:"9.5px",color:"#1e2535",fontWeight:"700",padding:"4px 6px 5px",textTransform:"uppercase",letterSpacing:"1px"}}>Recent</div>
               {projects.map(p=>(
                 <div key={p.id} onClick={()=>setActiveId(p.id)}
-                  style={{padding:"8px 9px",borderRadius:"8px",cursor:"pointer",marginBottom:"1px",background:activeId===p.id?"#0f1a2e":"transparent",border:activeId===p.id?"1px solid #1e3a5f":"1px solid transparent"}}
-                  onMouseEnter={e=>{if(activeId!==p.id)e.currentTarget.style.background="#0a0d17"}}
+                  style={{display:"flex",alignItems:"center",gap:"7px",padding:"7px 9px",borderRadius:"8px",cursor:"pointer",marginBottom:"2px",background:activeId===p.id?"#131b2e":"transparent",border:activeId===p.id?"1px solid #1e3a5f":"1px solid transparent"}}
+                  onMouseEnter={e=>{if(activeId!==p.id)e.currentTarget.style.background="#10141e"}}
                   onMouseLeave={e=>{if(activeId!==p.id)e.currentTarget.style.background="transparent"}}>
-                  <div style={{display:"flex",alignItems:"center",gap:"7px"}}>
-                    <div style={{width:"6px",height:"6px",borderRadius:"50%",background:p.color,flexShrink:0}}/>
-                    <div style={{flex:1,overflow:"hidden"}}>
-                      <div style={{fontSize:"11.5px",fontWeight:"500",color:activeId===p.id?"#c4d4f0":"#475569",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{p.name}</div>
-                      <div style={{fontSize:"9.5px",color:"#1e2535",marginTop:"1px"}}>{p.date}</div>
-                    </div>
+                  <span style={{fontSize:"12px"}}>📄</span>
+                  <div style={{flex:1,overflow:"hidden"}}>
+                    <div style={{fontSize:"11.5px",color:activeId===p.id?"#c4d4f0":"#475569",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",fontWeight:activeId===p.id?"500":"400"}}>{p.name}</div>
                   </div>
                 </div>
               ))}
             </div>
-            <div style={{padding:"8px",borderTop:"1px solid #0f1322"}}>
-              <div style={{padding:"8px 10px",borderRadius:"8px",background:"#0f1322",display:"flex",alignItems:"center",gap:"8px",cursor:"pointer"}}>
+            <div style={{padding:"8px",borderTop:"1px solid #1a1d27"}}>
+              <div style={{padding:"8px 10px",borderRadius:"8px",background:"#161922",display:"flex",alignItems:"center",gap:"8px",cursor:"pointer"}}>
                 <div style={{width:"22px",height:"22px",background:"linear-gradient(135deg,#4f46e5,#7c3aed)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"10px",fontWeight:"700",flexShrink:0}}>
                   {user?user.name[0].toUpperCase():"?"}
                 </div>
@@ -576,124 +573,205 @@ function BuilderView({initialPrompt,user,onGoHome,onOpenAuth}){
           </div>
         )}
         {!sidebar&&(
-          <button onClick={()=>setSidebar(true)} style={{position:"absolute",left:0,top:"50%",transform:"translateY(-50%)",zIndex:50,background:"#0f1322",border:"1px solid #1e2535",borderTopRightRadius:"8px",borderBottomRightRadius:"8px",color:"#475569",cursor:"pointer",padding:"10px 5px",fontSize:"12px",marginTop:"21px",fontFamily:"inherit"}}>›</button>
+          <button onClick={()=>setSidebar(true)} style={{position:"absolute",left:0,top:"50%",transform:"translateY(-50%)",zIndex:50,background:"#161922",border:"1px solid #1e2535",borderTopRightRadius:"7px",borderBottomRightRadius:"7px",color:"#475569",cursor:"pointer",padding:"8px 5px",fontSize:"11px",marginTop:"20px",fontFamily:"inherit"}}>›</button>
         )}
 
-        {/* CHAT */}
-        <div style={{width:"310px",flexShrink:0,display:"flex",flexDirection:"column",borderRight:"1px solid #0f1322",background:"#080b14"}}>
-          {/* Round status */}
-          <div style={{padding:"7px 12px",borderBottom:"1px solid #0f1322",display:"flex",alignItems:"center",gap:"7px"}}>
-            <div style={{display:"flex",gap:"4px"}}>
+        {/* ══ CHAT ══ */}
+        <div style={{width:"300px",flexShrink:0,display:"flex",flexDirection:"column",borderRight:"1px solid #1a1d27",background:"#0d0f17"}}>
+          {/* Round indicator */}
+          <div style={{padding:"6px 12px",borderBottom:"1px solid #1a1d27",display:"flex",alignItems:"center",gap:"6px",background:"#0a0c14"}}>
+            <div style={{display:"flex",gap:"3px"}}>
               {[1,2,3].map(r=>{
                 const isA=activeRound===r&&generating,isDone=doneRounds.includes(r);
-                return <div key={r} style={{width:"19px",height:"19px",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"7.5px",fontWeight:"700",border:"1px solid",borderColor:isDone?"#4f46e5":isA?"#7c3aed":"#1e2535",background:isDone?"#4f46e5":isA?"rgba(124,58,237,.2)":"transparent",color:isDone||isA?"#e2e8f0":"#334155",transition:"all .3s"}}>
-                  {isDone?"✓":r}
-                </div>;
+                return <div key={r} style={{width:"18px",height:"18px",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"7px",fontWeight:"700",border:"1px solid",borderColor:isDone?"#6366f1":isA?"#8b5cf6":"#1e2535",background:isDone?"#6366f1":isA?"rgba(139,92,246,.2)":"transparent",color:isDone||isA?"#fff":"#334155",transition:"all .3s"}}>{isDone?"✓":r}</div>;
               })}
             </div>
-            <div style={{flex:1,fontSize:"10px",color:"#2e3655",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{status||"Ready to build"}</div>
+            <div style={{flex:1,fontSize:"9.5px",color:"#334155",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{status||"Ready"}</div>
           </div>
+
           {/* Messages */}
-          <div style={{flex:1,overflowY:"auto",padding:"12px",display:"flex",flexDirection:"column",gap:"10px"}}>
-            {messages.length===0&&(
-              <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"10px",textAlign:"center",padding:"20px",height:"100%"}}>
+          <div style={{flex:1,overflowY:"auto",padding:"10px",display:"flex",flexDirection:"column",gap:"10px"}}>
+            {messages.length===0&&!generating&&(
+              <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"10px",textAlign:"center",padding:"24px 12px",height:"100%"}}>
                 <div style={{fontSize:"32px",animation:"float 3s ease-in-out infinite"}}>🏗️</div>
                 <div style={{fontSize:"13px",fontWeight:"600",color:"#475569"}}>What are we building?</div>
-                <div style={{fontSize:"11px",color:"#1e2535",lineHeight:"1.7",maxWidth:"200px"}}>Describe your website and watch two AI models build it live.</div>
+                <div style={{fontSize:"11px",color:"#1e2535",lineHeight:"1.7",maxWidth:"200px"}}>Describe your website and two AI models will build it live in real-time.</div>
                 <div style={{display:"flex",flexDirection:"column",gap:"5px",width:"100%",marginTop:"4px"}}>
                   {EXAMPLES.slice(0,3).map(e=>(
-                    <button key={e.label} onClick={()=>!generating&&run(e.text)} style={{padding:"8px 10px",background:"#0a0d17",border:"1px solid #141824",borderRadius:"8px",color:"#475569",fontSize:"11px",cursor:"pointer",textAlign:"left",fontFamily:"inherit"}}>
+                    <button key={e.label} onClick={()=>!generating&&run(e.text)} style={{padding:"8px 10px",background:"#10141e",border:"1px solid #1a1d27",borderRadius:"8px",color:"#475569",fontSize:"11px",cursor:"pointer",textAlign:"left",fontFamily:"inherit"}}>
                       {e.icon} {e.label}
                     </button>
                   ))}
                 </div>
               </div>
             )}
+
             {messages.map((m,i)=>(
-              <div key={i} style={{animation:"fadeIn .2s ease",display:"flex",flexDirection:"column",gap:"3px",alignItems:m.role==="user"?"flex-end":"flex-start"}}>
-                {m.role==="assistant"&&<div style={{fontSize:"9px",color:"#1e2535",marginLeft:"2px",fontWeight:"700",letterSpacing:"1px"}}>BUILDAI</div>}
-                <div style={{maxWidth:"92%",background:m.role==="user"?"linear-gradient(135deg,#4f46e5,#6d28d9)":"#0f1322",border:m.role==="assistant"?"1px solid #141824":"none",borderRadius:m.role==="user"?"13px 13px 3px 13px":"3px 13px 13px 13px",padding:"9px 12px",fontSize:"11.5px",lineHeight:"1.65",whiteSpace:"pre-line",color:m.role==="user"?"#e2e8f0":"#94a3b8"}}>
-                  {m.text}
-                </div>
+              <div key={i} style={{animation:"fadeIn .2s ease"}}>
+                {m.role==="user"?(
+                  <div style={{display:"flex",justifyContent:"flex-end"}}>
+                    <div style={{maxWidth:"90%",background:"linear-gradient(135deg,#4f46e5,#6d28d9)",borderRadius:"13px 13px 3px 13px",padding:"10px 13px",fontSize:"12px",lineHeight:"1.65",color:"#e2e8f0"}}>
+                      {m.text}
+                    </div>
+                  </div>
+                ):(
+                  <div>
+                    {/* AI Thinking block — like Lovable */}
+                    {m.thinking&&(
+                      <div style={{background:"#10141e",border:"1px solid #1a2035",borderRadius:"10px",padding:"12px 14px",marginBottom:"8px",fontSize:"11.5px",color:"#64748b",lineHeight:"1.75"}}>
+                        <div style={{fontSize:"10px",color:"#4f46e5",fontWeight:"700",marginBottom:"8px",display:"flex",alignItems:"center",gap:"6px"}}>
+                          <span style={{animation:"pulseOp 1.5s infinite",display:"inline-block"}}>●</span> Thought for 28s
+                        </div>
+                        {m.thinking.map((t,i)=>(
+                          <div key={i} style={{color:t.startsWith("•")?"#4f6080":"#475569",fontWeight:t==="Design approach:"?"600":"400",marginTop:t==="Design approach:"?"6px":"0"}}>{t}</div>
+                        ))}
+                      </div>
+                    )}
+                    {/* Card like Lovable */}
+                    {m.card&&(
+                      <div style={{background:"#10141e",border:"1px solid #1a2035",borderRadius:"10px",marginBottom:"8px",overflow:"hidden"}}>
+                        <div style={{padding:"10px 12px",borderBottom:"1px solid #1a2035",fontSize:"12px",fontWeight:"500",color:"#94a3b8"}}>{m.card}</div>
+                        <div style={{display:"flex",borderBottom:"1px solid #1a2035"}}>
+                          {["Details","Preview"].map((t,i)=>(
+                            <button key={t} style={{flex:1,padding:"8px",background:i===1?"#161c2e":"transparent",border:"none",color:i===1?"#818cf8":"#475569",fontSize:"11px",fontWeight:i===1?"600":"400",cursor:"pointer",fontFamily:"inherit"}}>{t}</button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {/* Main text */}
+                    <div style={{fontSize:"12px",color:"#94a3b8",lineHeight:"1.7",marginBottom:"8px",whiteSpace:"pre-line"}}>
+                      {m.text}
+                    </div>
+                    {/* What's next */}
+                    {m.next&&(
+                      <div style={{marginBottom:"8px"}}>
+                        <div style={{fontSize:"11px",fontWeight:"600",color:"#64748b",marginBottom:"6px"}}>What's next?</div>
+                        {m.next.map((n,i)=>(
+                          <div key={i} style={{fontSize:"11px",color:"#4f6080",marginBottom:"4px",paddingLeft:"8px",borderLeft:"2px solid #1e2535",lineHeight:"1.6"}}>
+                            <span style={{color:"#6366f1",fontWeight:"600"}}>{n.split(":")[0]}:</span>{n.slice(n.indexOf(":"))}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {/* Promo like "Lovable Cloud" */}
+                    {m.promo&&(
+                      <div style={{background:"rgba(99,102,241,.06)",border:"1px solid rgba(99,102,241,.15)",borderRadius:"9px",padding:"10px 12px",fontSize:"11px",color:"#64748b",lineHeight:"1.65"}}>
+                        {m.promo} <span style={{color:"#818cf8",cursor:"pointer",textDecoration:"underline"}}>Connect Supabase</span> makes it simple to add these without complex setup.
+                      </div>
+                    )}
+                    {/* Action buttons */}
+                    {m.text&&(
+                      <div style={{display:"flex",gap:"5px",marginTop:"8px",flexWrap:"wrap"}}>
+                        <button style={{padding:"5px 10px",background:"#10141e",border:"1px solid #1a2035",borderRadius:"7px",color:"#475569",fontSize:"10.5px",cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:"4px"}}>↗ Visit docs</button>
+                        <button onClick={()=>setModal("supabase")} style={{padding:"5px 10px",background:"#10141e",border:"1px solid #1a2035",borderRadius:"7px",color:"#475569",fontSize:"10.5px",cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:"4px"}}>🗄️ Connect Supabase</button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
-            {generating&&(
-              <div style={{display:"flex",flexDirection:"column",gap:"3px",alignItems:"flex-start"}}>
-                <div style={{fontSize:"9px",color:"#1e2535",marginLeft:"2px",fontWeight:"700",letterSpacing:"1px"}}>BUILDAI</div>
-                <div style={{background:"#0f1322",border:"1px solid #141824",borderRadius:"3px 13px 13px 13px",padding:"10px 14px",display:"flex",gap:"3px",alignItems:"center"}}>
-                  {[0,.2,.4].map((d,i)=><span key={i} style={{width:"5px",height:"5px",borderRadius:"50%",background:"#334155",display:"inline-block",animation:`pulse 1.2s ${d}s infinite`}}/>)}
+
+            {/* Thinking animation while generating */}
+            {generating&&thinkingMsg===true&&(
+              <div style={{background:"#10141e",border:"1px solid #1a2035",borderRadius:"10px",padding:"12px 14px"}}>
+                <div style={{fontSize:"10px",color:"#4f46e5",fontWeight:"700",marginBottom:"6px",display:"flex",alignItems:"center",gap:"6px"}}>
+                  <span style={{animation:"pulseOp 1s infinite",display:"inline-block"}}>●</span> Thinking...
                 </div>
+                <div style={{background:"#1a1d27",borderRadius:"4px",height:"3px",overflow:"hidden"}}>
+                  <div style={{height:"100%",background:"linear-gradient(90deg,#6366f1,#8b5cf6)",animation:"thinking 2s ease-in-out infinite",width:"60%"}}/>
+                </div>
+              </div>
+            )}
+            {generating&&thinkingMsg===false&&(
+              <div style={{display:"flex",gap:"3px",padding:"10px 14px",background:"#10141e",border:"1px solid #1a2035",borderRadius:"10px",alignItems:"center"}}>
+                {[0,.15,.3].map((d,i)=><span key={i} style={{width:"5px",height:"5px",borderRadius:"50%",background:"#334155",display:"inline-block",animation:`pulseOp 1.2s ${d}s infinite`}}/>)}
               </div>
             )}
             <div ref={bottomRef}/>
           </div>
-          {/* Quick chips */}
+
+          {/* Suggestion chips — exactly like Lovable bottom */}
           {code&&!generating&&(
-            <div style={{padding:"0 10px 6px",display:"flex",gap:"4px",flexWrap:"wrap"}}>
-              {["Add dark mode","Make responsive","Add animations","Fix navigation"].map(s=>(
-                <button key={s} onClick={()=>setInput(s)} style={{padding:"4px 8px",background:"#0a0d17",border:"1px solid #141824",borderRadius:"999px",fontSize:"10px",color:"#475569",cursor:"pointer",fontFamily:"inherit"}}>{s}</button>
+            <div style={{padding:"6px 10px",borderTop:"1px solid #1a1d27",display:"flex",gap:"5px",overflowX:"auto"}}>
+              {SUGGESTIONS.map(s=>(
+                <button key={s} onClick={()=>setInput(s)} style={{padding:"5px 10px",background:"#10141e",border:"1px solid #1a2035",borderRadius:"999px",fontSize:"10px",color:"#475569",cursor:"pointer",whiteSpace:"nowrap",fontFamily:"inherit"}}>{s}</button>
               ))}
             </div>
           )}
-          {/* Input */}
-          <div style={{padding:"8px 10px 12px",borderTop:"1px solid #0f1322"}}>
-            <div style={{display:"flex",gap:"6px",alignItems:"flex-end"}}>
+
+          {/* Input area */}
+          <div style={{padding:"8px 10px 10px",borderTop:"1px solid #1a1d27",background:"#0a0c14"}}>
+            <div style={{display:"flex",gap:"5px",alignItems:"flex-end"}}>
               <textarea
-                style={{flex:1,background:"#0f1322",border:"1px solid #1e2535",borderRadius:"11px",padding:"9px 11px",color:"#e2e8f0",fontSize:"12px",resize:"none",outline:"none",lineHeight:"1.5",fontFamily:"inherit",minHeight:"38px",maxHeight:"90px"}}
-                placeholder="Describe your website or a change..."
+                style={{flex:1,background:"#10141e",border:"1px solid #1e2535",borderRadius:"11px",padding:"9px 11px",color:"#e2e8f0",fontSize:"12px",resize:"none",outline:"none",lineHeight:"1.5",fontFamily:"inherit",minHeight:"38px",maxHeight:"80px"}}
+                placeholder={`Ask Lovable...`}
                 value={input} onChange={e=>setInput(e.target.value)}
                 onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();run();}}}
                 rows={1} disabled={generating}
               />
               <button onClick={()=>run()} disabled={!input.trim()||generating}
-                style={{width:"34px",height:"34px",borderRadius:"9px",border:"none",flexShrink:0,background:input.trim()&&!generating?"linear-gradient(135deg,#4f46e5,#7c3aed)":"#1e2535",color:input.trim()&&!generating?"#fff":"#334155",cursor:input.trim()&&!generating?"pointer":"not-allowed",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"14px",transition:"all .2s",fontFamily:"inherit"}}>↑</button>
+                style={{width:"34px",height:"34px",borderRadius:"9px",border:"none",flexShrink:0,background:input.trim()&&!generating?"linear-gradient(135deg,#6366f1,#8b5cf6)":"#1e2535",color:input.trim()&&!generating?"#fff":"#334155",cursor:input.trim()&&!generating?"pointer":"not-allowed",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"14px",fontFamily:"inherit"}}>↑</button>
             </div>
-            <div style={{fontSize:"9px",color:"#141824",textAlign:"center",marginTop:"5px"}}>Enter to send · Shift+Enter for new line</div>
+            {/* Visual edits toggle — like Lovable */}
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:"8px"}}>
+              <button onClick={()=>setVisualEdits(v=>!v)} style={{display:"flex",alignItems:"center",gap:"6px",padding:"4px 9px",background:visualEdits?"rgba(99,102,241,.12)":"transparent",border:`1px solid ${visualEdits?"rgba(99,102,241,.3)":"transparent"}`,borderRadius:"7px",color:visualEdits?"#818cf8":"#475569",fontSize:"10.5px",cursor:"pointer",fontFamily:"inherit",transition:"all .15s"}}>
+                <span style={{fontSize:"11px"}}>🎨</span> Visual edits {visualEdits?"ON":""}
+              </button>
+              <div style={{display:"flex",gap:"3px"}}>
+                <button style={{padding:"4px 8px",background:"transparent",border:"1px solid transparent",borderRadius:"6px",color:"#475569",fontSize:"10.5px",cursor:"pointer",fontFamily:"inherit"}}>Plan</button>
+                <button style={{width:"24px",height:"24px",background:"transparent",border:"none",color:"#475569",cursor:"pointer",fontSize:"12px",display:"flex",alignItems:"center",justifyContent:"center"}}>📎</button>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* PREVIEW */}
-        <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
-          <div style={{display:"flex",alignItems:"center",padding:"0 14px",borderBottom:"1px solid #0f1322",background:"#080b14"}}>
-            <div style={{display:"flex"}}>
-              {[["preview","🌐 Preview"],["code","</> Code"]].map(([t,l])=>(
-                <button key={t} onClick={()=>setTab(t)} style={{padding:"8px 14px",background:"transparent",border:"none",borderBottom:tab===t?"2px solid #6366f1":"2px solid transparent",color:tab===t?"#c4d4f0":"#334155",fontSize:"11.5px",fontWeight:tab===t?"600":"400",cursor:"pointer",marginBottom:"-1px",fontFamily:"inherit"}}>
-                  {l}
-                </button>
-              ))}
+        {/* ══ PREVIEW ══ */}
+        <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden",background:"#060810"}}>
+          {/* Published status bar */}
+          {code&&!generating&&(
+            <div style={{padding:"3px 14px",background:"#0d0f17",borderBottom:"1px solid #1a1d27",display:"flex",alignItems:"center",gap:"8px"}}>
+              <span style={{fontSize:"10px",color:"#334155"}}>Previewing last saved version</span>
+              <span style={{width:"5px",height:"5px",borderRadius:"50%",background:"#10b981",display:"inline-block"}}/>
+              <span style={{fontSize:"10px",color:"#10b981"}}>Published</span>
+              <span style={{fontSize:"10px",color:"#1e2535",marginLeft:"auto"}}>Just now</span>
             </div>
-            <div style={{flex:1}}/>
-            {code&&!generating&&(
-              <button style={{padding:"5px 11px",background:"transparent",border:"1px solid #141824",borderRadius:"7px",color:"#475569",fontSize:"11px",cursor:"pointer",fontFamily:"inherit"}}>
-                ⬇ Download ZIP
-              </button>
-            )}
-          </div>
-          <div style={{flex:1,position:"relative",overflow:"hidden",display:"flex",alignItems:"center",justifyContent:"center",background:tab==="preview"?"#1a1c2e":"#060810"}}>
+          )}
+
+          {/* Content */}
+          <div style={{flex:1,position:"relative",overflow:"hidden",display:"flex",alignItems:"center",justifyContent:"center",background:tab==="preview"?"#1a1c2a":"#060810"}}>
             {tab==="preview"?(
               code?(
-                <div style={{width:previewW,height:"100%",transition:"width .3s ease",boxShadow:viewMode!=="desktop"?"0 0 60px rgba(0,0,0,.7)":undefined,borderRadius:viewMode!=="desktop"?"8px":0,overflow:"hidden"}}>
+                <div style={{width:previewW,height:"100%",transition:"width .3s",boxShadow:viewMode!=="desktop"?"0 0 60px rgba(0,0,0,.8)":undefined,borderRadius:viewMode!=="desktop"?"10px":0,overflow:"hidden"}}>
                   <iframe style={{width:"100%",height:"100%",border:"none"}} src={iframeSrc} title="preview" sandbox="allow-scripts"/>
                 </div>
               ):(
-                <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"12px",height:"100%"}}>
-                  <div style={{fontSize:"64px",opacity:.1,animation:"float 3s ease-in-out infinite"}}>🌐</div>
+                <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"14px",height:"100%",color:"#1e2535"}}>
+                  <div style={{fontSize:"60px",opacity:.12,animation:"float 3s ease-in-out infinite"}}>🌐</div>
                   <div style={{fontSize:"15px",fontWeight:"600",color:"#1e2535"}}>Preview will appear here</div>
-                  <div style={{fontSize:"12px",color:"#141824"}}>Describe what to build in the chat →</div>
+                  <div style={{fontSize:"12px",color:"#141824"}}>Describe your website in the chat →</div>
                 </div>
               )
-            ):(
+            ):tab==="code"?(
               <div style={{width:"100%",height:"100%",overflowY:"auto"}}>
                 {code?(
                   <pre style={{margin:0,padding:"22px",fontSize:"11px",lineHeight:"1.85",color:"#3d5473",fontFamily:"'Fira Code',monospace",whiteSpace:"pre-wrap",wordBreak:"break-word"}}>{code}</pre>
                 ):(
-                  <div style={{height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"10px"}}>
-                    <div style={{fontSize:"48px",opacity:.1}}>📝</div>
-                    <div style={{fontSize:"13px",color:"#1e2535"}}>No code yet</div>
+                  <div style={{height:"100%",display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:"10px",color:"#1e2535"}}>
+                    <div style={{fontSize:"40px",opacity:.1}}>📝</div>
+                    <div style={{fontSize:"13px"}}>No code yet</div>
                   </div>
                 )}
               </div>
+            ):(
+              <div style={{width:"100%",height:"100%",display:"flex",flexDirection:"column",background:"#060810"}}>
+                <div style={{padding:"10px 16px",borderBottom:"1px solid #1a1d27",fontSize:"11px",color:"#334155",fontFamily:"'Fira Code',monospace"}}>Console</div>
+                <div style={{flex:1,padding:"14px 16px",fontFamily:"'Fira Code',monospace",fontSize:"11px",color:"#475569"}}>
+                  {code&&<div style={{color:"#10b981"}}>✓ Website loaded successfully</div>}
+                  {!code&&<div style={{color:"#334155"}}>Waiting for build...</div>}
+                </div>
+              </div>
             )}
+
             {generating&&(
               <div style={{position:"absolute",inset:0,background:"rgba(6,8,16,.92)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"16px",backdropFilter:"blur(8px)"}}>
                 <div style={{width:"48px",height:"48px",borderRadius:"50%",border:"3px solid #1e2535",borderTop:"3px solid #6366f1",animation:"spin .8s linear infinite"}}/>
@@ -701,10 +779,19 @@ function BuilderView({initialPrompt,user,onGoHome,onOpenAuth}){
                   <div style={{fontSize:"13px",color:"#475569",marginBottom:"4px"}}>{status}</div>
                   <div style={{fontSize:"11px",color:"#1e2535"}}>Usually 8–15 seconds</div>
                 </div>
-                {code&&<div style={{padding:"7px 16px",background:"rgba(99,102,241,.1)",border:"1px solid rgba(99,102,241,.2)",borderRadius:"999px",fontSize:"11px",color:"#6366f1"}}>Updating preview...</div>}
+                {code&&<div style={{padding:"7px 16px",background:"rgba(99,102,241,.1)",border:"1px solid rgba(99,102,241,.2)",borderRadius:"999px",fontSize:"11px",color:"#6366f1"}}>Loading your page...</div>}
               </div>
             )}
           </div>
+
+          {/* Download bar */}
+          {code&&!generating&&(
+            <div style={{padding:"6px 14px",borderTop:"1px solid #1a1d27",background:"#0d0f17",display:"flex",alignItems:"center",gap:"8px"}}>
+              <button style={{padding:"5px 12px",background:"#161922",border:"1px solid #1e2535",borderRadius:"7px",color:"#64748b",fontSize:"11px",cursor:"pointer",fontFamily:"inherit"}}>⬇ Download ZIP</button>
+              <div style={{flex:1}}/>
+              <span style={{fontSize:"10px",color:"#1e2535"}}>Make lightweight changes, quickly.</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -716,7 +803,7 @@ function BuilderView({initialPrompt,user,onGoHome,onOpenAuth}){
   );
 }
 
-// ROOT
+// ── ROOT ──────────────────────────────────────────────────────────────────────
 function Root(){
   const [view,setView]=useState("home");
   const [prompt,setPrompt]=useState("");
